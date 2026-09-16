@@ -1,79 +1,79 @@
-const numeroInput = document.querySelector('#numero');
-const boton = document.querySelector('#comprobar');
-const botonReiniciar = document.querySelector('#reiniciar');
+const input = document.querySelector('#numero');
+const comprobar = document.querySelector('#comprobar');
+const reiniciar = document.querySelector('#reiniciar');
 const mensaje = document.querySelector('#mensaje');
-const contador = document.querySelector('#intentos');
+const contador = document.querySelector('#contador');
 
 let secreto = Math.floor(Math.random() * 100) + 1;
 let intentos = 0;
 const maxIntentos = 7;
 
-function setMensaje(texto, tipo = 'neutral') {
+function mostrarMensaje(texto, tipo) {
   mensaje.textContent = texto;
   mensaje.className = `message ${tipo}`;
 }
 
-function actualizarIntentos() {
-  contador.textContent = String(intentos);
+function actualizarContador() {
+  contador.textContent = intentos;
 }
 
-function revisarNumero() {
-  const valor = Number(numeroInput.value);
+function comprobarNumero() {
+  const valor = Number(input.value);
 
-  if (numeroInput.value.trim() === '') {
-    setMensaje('Introduce un número antes de consultar al oráculo.', 'info');
+  if (input.value.trim() === '') {
+    mostrarMensaje('Introduce un número antes de comprobar.', 'info');
     return;
   }
 
   if (Number.isNaN(valor) || valor < 1 || valor > 100) {
-    setMensaje('El número debe estar entre 1 y 100. Intenta otra vez.', 'error');
+    mostrarMensaje('El número debe estar entre 1 y 100.', 'error');
     return;
   }
 
   intentos += 1;
-  actualizarIntentos();
+  actualizarContador();
 
   if (valor === secreto) {
-    setMensaje(`¡Correcto! Has acertado en ${intentos} intento${intentos === 1 ? '' : 's'}.`, 'success');
-    boton.disabled = true;
-    numeroInput.disabled = true;
+    mostrarMensaje(`¡Correcto! Has acertado en ${intentos} intento(s).`, 'success');
+    comprobar.disabled = true;
+    input.disabled = true;
     return;
   }
 
   if (intentos >= maxIntentos) {
-    setMensaje(`Se han acabado los intentos. El número secreto era ${secreto}.`, 'error');
-    boton.disabled = true;
-    numeroInput.disabled = true;
+    mostrarMensaje(`Se acabaron los intentos. El número secreto era ${secreto}.`, 'error');
+    comprobar.disabled = true;
+    input.disabled = true;
     return;
   }
 
   if (valor < secreto) {
-    setMensaje('El oráculo dice: el número es mayor.', 'info');
+    mostrarMensaje('El oráculo dice: es mayor.', 'info');
   } else {
-    setMensaje('El oráculo dice: el número es menor.', 'info');
+    mostrarMensaje('El oráculo dice: es menor.', 'info');
   }
 
-  numeroInput.value = '';
-  numeroInput.focus();
+  input.value = '';
+  input.focus();
 }
 
-function reiniciarJuego() {
+function iniciarJuego() {
   secreto = Math.floor(Math.random() * 100) + 1;
   intentos = 0;
-  actualizarIntentos();
-  numeroInput.value = '';
-  numeroInput.disabled = false;
-  boton.disabled = false;
-  setMensaje('Introduce un número para comenzar.', 'neutral');
-  numeroInput.focus();
+  actualizarContador();
+  input.value = '';
+  input.disabled = false;
+  comprobar.disabled = false;
+  mostrarMensaje('Introduce un número para comenzar.', 'neutral');
+  input.focus();
 }
 
-boton.addEventListener('click', revisarNumero);
-
-numeroInput.addEventListener('keydown', (event) => {
+comprobar.addEventListener('click', comprobarNumero);
+reiniciar.addEventListener('click', iniciarJuego);
+input.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
-    revisarNumero();
+    comprobarNumero();
   }
 });
 
-botonReiniciar.addEventListener('click', reiniciarJuego);
+actualizarContador();

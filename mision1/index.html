@@ -3,89 +3,70 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Misión 1 · El oráculo de los números</title>
+    <title>Misión 1</title>
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <div class="page-shell">
+    <div class="panel">
       <header class="topbar">
-        <div class="mission-badge">MISIÓN</div>
+        <span class="badge">MISIÓN</span>
       </header>
 
-      <main class="mission-page">
-        <h1>Misión 1 · El oráculo de los números <span class="sparkle">✦</span></h1>
+      <main class="content">
+        <h1>Misión 1 · El oráculo de los números</h1>
 
-        <div class="meta-row">
-          <span class="dot gold"></span>
+        <div class="meta">
+          <span class="dot"></span>
           <span>IA como pair</span>
-          <span class="separator">•</span>
+          <span>•</span>
           <span>60–90 min</span>
-          <span class="separator">•</span>
+          <span>•</span>
           <span>cuaderno 1, nivel 2</span>
         </div>
 
-        <section class="content-grid">
-          <div class="left-panel">
-            <ul class="task-list">
-              <li><span class="goal-icon">🎯</span> <strong>Objetivo:</strong> el juego «Adivina el número» (1–100) completado en el navegador.</li>
-              <li><span class="goal-icon">🧰</span> <strong>Prácticas:</strong> <code>const</code> / <code>let</code>, <code>Number()</code> y <code>===</code>, condicionales, template literals, <code>querySelector</code>, <code>textContent</code>, <code>evento click</code>.</li>
-            </ul>
+        <div class="grid">
+          <section class="left">
+            <p><strong>Objetivo:</strong> adivina un número del 1 al 100.</p>
+            <p><strong>Prácticas:</strong> const, let, Number(), condicionales y eventos click.</p>
 
-            <pre class="code-snippet"><code>// app.js - el oráculo elige su número secreto:
-const secreto = Math.floor(Math.random() * 100) + 1;
-console.log("psst... el secreto es", secreto);
-</code></pre>
+            <pre><code>const secreto = Math.floor(Math.random() * 100) + 1;</code></pre>
+          </section>
 
-            <div class="game-card" aria-label="Juego del oráculo">
-              <h2>Adivina el número secreto</h2>
-
-              <div class="game-controls">
-                <label for="numero" class="sr-only">Introduce un número</label>
-                <input id="numero" type="number" min="1" max="100" placeholder="1-100" />
-                <button id="comprobar" type="button">Comprobar</button>
-                <button id="reiniciar" type="button" class="secondary">Nueva partida</button>
-              </div>
-
-              <div class="status-row">
-                <span>Intentos:</span>
-                <strong id="intentos">0</strong>
-                <span>/</span>
-                <strong>7</strong>
-              </div>
-
-              <p id="mensaje" class="message neutral">Introduce un número para comenzar.</p>
-            </div>
-          </div>
-
-          <aside class="right-panel">
-            <h3>Fases (checkpoints)</h3>
+          <aside class="right">
+            <h2>Fases</h2>
             <ol>
-              <li><strong>Conexión:</strong> <code>app.js</code> carga con <code>defer</code>; selecciona input, botón y párrafos.</li>
-              <li><strong>Primera consulta:</strong> <code>click</code> → lee el valor, <code>Number()</code>, muéstralo.</li>
-              <li><strong>El oráculo responde:</strong> mayor / menor / correcto; valor vacío o fuera de 1–100 → aviso sin gastar intento.</li>
-              <li><strong>El marcador:</strong> <code>let intentos</code> visible en pantalla.</li>
-              <li><strong>Fin de partida:</strong> al acertar, <code>boton.disabled = true</code>.</li>
+              <li>Conexión con <code>defer</code>.</li>
+              <li>Lee el valor del input.</li>
+              <li>Comprueba si es mayor o menor.</li>
+              <li>Actualiza el contador.</li>
+              <li>Acaba la partida al acertar.</li>
             </ol>
           </aside>
-        </section>
+        </div>
 
-        <section class="acceptance-box">
-          <div class="accept-title">No está terminada hasta marcar todo:</div>
-          <ul>
-            <li><span class="check"></span>El script se carga con <code>defer</code> y no hay errores en consola.</li>
-            <li><span class="check"></span>Vacío o fuera de rango: aviso y no incrementa intentos.</li>
-            <li><span class="check"></span>Pistas mayor/menor correctas en todos los casos.</li>
-            <li><span class="check"></span>El contador se actualiza en cada consulta válida.</li>
-            <li><span class="check"></span>Al acertar: mensaje con los intentos y botón desactivado.</li>
-            <li><span class="check"></span>Ningún <code>console.log</code> con el secreto en la versión final.</li>
-          </ul>
+        <section class="game">
+          <h3>Adivina el número secreto</h3>
+
+          <div class="controls">
+            <input id="numero" type="number" min="1" max="100" placeholder="Escribe un número" />
+            <button id="comprobar" type="button">Comprobar</button>
+            <button id="reiniciar" class="secondary" type="button">Reiniciar</button>
+          </div>
+
+          <div class="intentos">
+            <span>Intentos:</span>
+            <strong id="contador">0</strong>
+            <span>/ 7</span>
+          </div>
+
+          <p id="mensaje" class="message neutral">Introduce un número para comenzar.</p>
         </section>
       </main>
 
-      <footer class="footer-bar">
+      <footer class="footer">
         <span>U1 · Introducción a JavaScript</span>
         <span>U-tad · Web Development I, the Client</span>
-        <span>36</span>
+        <span>35</span>
       </footer>
     </div>
 
