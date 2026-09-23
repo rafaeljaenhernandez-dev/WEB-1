@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Misión 1</title>
+    <title>El oráculo de los números</title>
     <link rel="stylesheet" href="index.css" />
+    <script src="index.js" defer></script>
   </head>
   <body>
     <div class="panel">
@@ -13,7 +14,7 @@
       </header>
 
       <main class="content">
-        <h1>Misión 1 · El oráculo de los números</h1>
+        <h1>🔮 El oráculo de los números</h1>
 
         <div class="meta">
           <span class="dot"></span>
@@ -45,21 +46,17 @@
         </div>
 
         <section class="game">
-          <h3>Adivina el número secreto</h3>
+          <p class="intro">He pensado un número del 1 al 100. ¿Te atreves?</p>
 
           <div class="controls">
-            <input id="numero" type="number" min="1" max="100" placeholder="Escribe un número" />
-            <button id="comprobar" type="button">Comprobar</button>
-            <button id="reiniciar" class="secondary" type="button">Reiniciar</button>
+            <input id="intento" type="number" min="1" max="100" placeholder="Escribe un número" />
+            <button id="probar" type="button">Consultar al oráculo</button>
+            <button id="reiniciar" class="secondary" type="button">Nueva profecía</button>
           </div>
 
-          <div class="intentos">
-            <span>Intentos:</span>
-            <strong id="contador">0</strong>
-            <span>/ 7</span>
-          </div>
-
-          <p id="mensaje" class="message neutral">Introduce un número para comenzar.</p>
+          <p id="respuesta" class="message neutral">El oráculo espera...</p>
+          <p id="marcador" class="marcador"></p>
+          <p id="historial" class="historial"></p>
         </section>
       </main>
 
@@ -69,7 +66,5 @@
         <span>35</span>
       </footer>
     </div>
-
-    <script src="index.js"></script>
   </body>
 </html>

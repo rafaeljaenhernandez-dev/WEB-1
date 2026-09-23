@@ -1,79 +1,88 @@
-const input = document.querySelector('#numero');
-const comprobar = document.querySelector('#comprobar');
-const reiniciar = document.querySelector('#reiniciar');
-const mensaje = document.querySelector('#mensaje');
-const contador = document.querySelector('#contador');
+const intento = document.querySelector("#intento");
+const probar = document.querySelector("#probar");
+const respuesta = document.querySelector("#respuesta");
+const marcador = document.querySelector("#marcador");
+const reiniciar = document.querySelector("#reiniciar");
+const historial = document.querySelector("#historial");
+
+const MAX_INTENTOS = 7;
 
 let secreto = Math.floor(Math.random() * 100) + 1;
 let intentos = 0;
-const maxIntentos = 7;
+let probados = [];
 
-function mostrarMensaje(texto, tipo) {
-  mensaje.textContent = texto;
-  mensaje.className = `message ${tipo}`;
+function responder(texto, tipo) {
+  respuesta.textContent = texto;
+  respuesta.className = `message ${tipo}`;
 }
 
-function actualizarContador() {
-  contador.textContent = intentos;
+function actualizarMarcador() {
+  marcador.textContent = `Intentos: ${intentos} / ${MAX_INTENTOS}`;
+  historial.textContent = probados.length > 0 ? `Has probado: ${probados.join(", ")}` : "";
 }
 
-function comprobarNumero() {
-  const valor = Number(input.value);
+function terminarPartida() {
+  probar.disabled = true;
+  intento.disabled = true;
+}
 
-  if (input.value.trim() === '') {
-    mostrarMensaje('Introduce un número antes de comprobar.', 'info');
+function consultar() {
+  if (intento.value === "") {
+    responder("🤨 Eso no es un número válido", "error");
     return;
   }
 
-  if (Number.isNaN(valor) || valor < 1 || valor > 100) {
-    mostrarMensaje('El número debe estar entre 1 y 100.', 'error');
+  const numero = Number(intento.value);
+
+  if (!Number.isInteger(numero) || numero < 1 || numero > 100) {
+    responder("🤨 Eso no es un número válido", "error");
     return;
   }
 
-  intentos += 1;
-  actualizarContador();
+  intentos++;
+  probados.push(numero);
+  actualizarMarcador();
 
-  if (valor === secreto) {
-    mostrarMensaje(`¡Correcto! Has acertado en ${intentos} intento(s).`, 'success');
-    comprobar.disabled = true;
-    input.disabled = true;
+  if (numero === secreto) {
+    responder(`🎉 ¡Correcto! Lo has adivinado en ${intentos} intento(s).`, "success");
+    terminarPartida();
     return;
   }
 
-  if (intentos >= maxIntentos) {
-    mostrarMensaje(`Se acabaron los intentos. El número secreto era ${secreto}.`, 'error');
-    comprobar.disabled = true;
-    input.disabled = true;
+  if (intentos >= MAX_INTENTOS) {
+    responder(`💀 Se agotaron los intentos. Mi número era ${secreto}.`, "error");
+    terminarPartida();
     return;
   }
 
-  if (valor < secreto) {
-    mostrarMensaje('El oráculo dice: es mayor.', 'info');
+  if (numero < secreto) {
+    responder(`📈 Mi número es mayor que ${numero}`, "info");
   } else {
-    mostrarMensaje('El oráculo dice: es menor.', 'info');
+    responder(`📉 Mi número es menor que ${numero}`, "info");
   }
 
-  input.value = '';
-  input.focus();
+  intento.value = "";
+  intento.focus();
 }
 
-function iniciarJuego() {
+function nuevaProfecia() {
   secreto = Math.floor(Math.random() * 100) + 1;
   intentos = 0;
-  actualizarContador();
-  input.value = '';
-  input.disabled = false;
-  comprobar.disabled = false;
-  mostrarMensaje('Introduce un número para comenzar.', 'neutral');
-  input.focus();
+  probados = [];
+  intento.value = "";
+  intento.disabled = false;
+  probar.disabled = false;
+  responder("El oráculo espera...", "neutral");
+  actualizarMarcador();
+  intento.focus();
 }
 
-comprobar.addEventListener('click', comprobarNumero);
-reiniciar.addEventListener('click', iniciarJuego);
-input.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
-    comprobarNumero();
+probar.addEventListener("click", consultar);
+reiniciar.addEventListener("click", nuevaProfecia);
+intento.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    consultar();
   }
 });
 
-actualizarContador();
+actualizarMarcador();
