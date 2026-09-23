@@ -9,6 +9,7 @@ const NIVELES = {
 const DURACION_FALLO = 800;
 const DURACION_HECHIZO = 1500;
 const PENALIZACION_HECHIZO = 5;
+const TECLA_SECRETA = "n";
 
 const tablero = document.querySelector("#tablero");
 const mensaje = document.querySelector("#mensaje");
@@ -266,6 +267,16 @@ function nuevaPartida() {
   mostrarMensaje("Gira dos cartas para empezar.", "neutro");
 }
 
+function alternarModoNocturno(event) {
+  const escribiendo = event.target.matches("input, select, textarea");
+  if (event.key?.toLowerCase() !== TECLA_SECRETA || event.repeat || escribiendo) {
+    return;
+  }
+
+  const activado = document.body.classList.toggle("modo-oscuro");
+  mostrarMensaje(activado ? "🌙 Modo nocturno activado." : "☀️ Vuelve la luz del día.", "info");
+}
+
 function manejarClicTablero(event) {
   const carta = event.target.closest(".carta");
   if (!carta || !puedeGirar(carta)) {
@@ -279,5 +290,6 @@ selectorNivel.addEventListener("change", nuevaPartida);
 botonNuevaPartida.addEventListener("click", nuevaPartida);
 botonRevancha.addEventListener("click", nuevaPartida);
 botonHechizo.addEventListener("click", lanzarHechizo);
+document.addEventListener("keydown", alternarModoNocturno);
 
 nuevaPartida();
