@@ -15,10 +15,26 @@
         <p class="cabecera__intro">Encuentra todas las parejas de runas antes de que se te olviden.</p>
       </header>
 
+      <section class="controles" aria-label="Controles de la partida">
+        <label class="controles__nivel">
+          Dificultad
+          <select id="nivel">
+            <option value="facil">Aprendiz · 6 parejas</option>
+            <option value="normal" selected>Hechicero · 8 parejas</option>
+            <option value="dificil">Archimago · 10 parejas</option>
+          </select>
+        </label>
+        <button id="nueva-partida" class="boton" type="button">Nueva partida</button>
+      </section>
+
       <dl class="marcador">
         <div class="marcador__dato">
           <dt>Movimientos</dt>
           <dd id="movimientos">0</dd>
+        </div>
+        <div class="marcador__dato">
+          <dt>Tiempo</dt>
+          <dd id="tiempo">00:00</dd>
         </div>
         <div class="marcador__dato">
           <dt>Parejas</dt>
@@ -29,6 +45,12 @@
       <p id="mensaje" class="mensaje mensaje--neutro" aria-live="polite">Gira dos cartas para empezar.</p>
 
       <section id="tablero" class="tablero" aria-label="Tablero de cartas"></section>
+
+      <section id="resultado" class="resultado" hidden>
+        <h2>🎉 ¡Tablero completado!</h2>
+        <p id="resumen"></p>
+        <button id="revancha" class="boton" type="button">Jugar otra vez</button>
+      </section>
 
       <footer class="pie">
         <p>Web Development I · U-tad</p>

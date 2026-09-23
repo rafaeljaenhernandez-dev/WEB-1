@@ -1,17 +1,43 @@
-const SIMBOLOS = ["🐉", "🧙", "🗡️", "🛡️", "🔮", "🏰", "🦄", "👑"];
+const SIMBOLOS = ["🐉", "🧙", "🗡️", "🛡️", "🔮", "🏰", "🦄", "👑", "🧪", "📜"];
+
+const NIVELES = {
+  facil: { parejas: 6, columnas: 4 },
+  normal: { parejas: 8, columnas: 4 },
+  dificil: { parejas: 10, columnas: 5 },
+};
+
 const DURACION_FALLO = 800;
 
 const tablero = document.querySelector("#tablero");
 const mensaje = document.querySelector("#mensaje");
+const selectorNivel = document.querySelector("#nivel");
+const botonNuevaPartida = document.querySelector("#nueva-partida");
 const textoMovimientos = document.querySelector("#movimientos");
+const textoTiempo = document.querySelector("#tiempo");
 const textoParejas = document.querySelector("#parejas");
+const resultado = document.querySelector("#resultado");
+const resumen = document.querySelector("#resumen");
+const botonRevancha = document.querySelector("#revancha");
 
-const estado = {
-  giradas: [],
-  parejas: 0,
-  movimientos: 0,
-  bloqueado: false,
-};
+function crearEstadoInicial(nivel) {
+  return {
+    nivel,
+    giradas: [],
+    parejas: 0,
+    movimientos: 0,
+    segundos: 0,
+    bloqueado: false,
+    terminada: false,
+    intervalo: null,
+    espera: null,
+  };
+}
+
+let estado = crearEstadoInicial(selectorNivel.value);
+
+function totalParejas() {
+  return NIVELES[estado.nivel].parejas;
+}
 
 function barajar(lista) {
   const copia = [...lista];
@@ -20,6 +46,12 @@ function barajar(lista) {
     [copia[i], copia[j]] = [copia[j], copia[i]];
   }
   return copia;
+}
+
+function formatearTiempo(segundos) {
+  const minutos = String(Math.floor(segundos / 60)).padStart(2, "0");
+  const resto = String(segundos % 60).padStart(2, "0");
+  return `${minutos}:${resto}`;
 }
 
 function crearElemento(etiqueta, clase, texto = "") {
@@ -41,9 +73,13 @@ function crearCarta(simbolo) {
 }
 
 function pintarTablero() {
-  const mazo = barajar([...SIMBOLOS, ...SIMBOLOS]);
+  const { parejas, columnas } = NIVELES[estado.nivel];
+  const simbolos = SIMBOLOS.slice(0, parejas);
+  const mazo = barajar([...simbolos, ...simbolos]);
   const fragmento = document.createDocumentFragment();
+
   mazo.forEach((simbolo) => fragmento.append(crearCarta(simbolo)));
+  tablero.style.setProperty("--columnas", columnas);
   tablero.replaceChildren(fragmento);
 }
 
@@ -54,11 +90,32 @@ function mostrarMensaje(texto, tipo) {
 
 function actualizarMarcador() {
   textoMovimientos.textContent = estado.movimientos;
-  textoParejas.textContent = `${estado.parejas} / ${SIMBOLOS.length}`;
+  textoTiempo.textContent = formatearTiempo(estado.segundos);
+  textoParejas.textContent = `${estado.parejas} / ${totalParejas()}`;
+}
+
+function iniciarTemporizador() {
+  estado.intervalo = setInterval(() => {
+    estado.segundos++;
+    actualizarMarcador();
+  }, 1000);
+}
+
+function detenerTemporizador() {
+  clearInterval(estado.intervalo);
+  estado.intervalo = null;
+}
+
+function terminarPartida() {
+  estado.terminada = true;
+  detenerTemporizador();
+  mostrarMensaje("🎉 ¡Has encontrado todas las parejas!", "exito");
+  resumen.textContent = `Lo has conseguido en ${estado.movimientos} movimientos y ${formatearTiempo(estado.segundos)}.`;
+  resultado.hidden = false;
 }
 
 function puedeGirar(carta) {
-  return !estado.bloqueado && !carta.classList.contains("carta--girada");
+  return !estado.bloqueado && !estado.terminada && !carta.classList.contains("carta--girada");
 }
 
 function acertarPareja(primera, segunda) {
@@ -70,8 +127,8 @@ function acertarPareja(primera, segunda) {
   estado.parejas++;
   mostrarMensaje("✨ ¡Pareja encontrada!", "exito");
 
-  if (estado.parejas === SIMBOLOS.length) {
-    mostrarMensaje("🎉 ¡Has encontrado todas las parejas!", "exito");
+  if (estado.parejas === totalParejas()) {
+    terminarPartida();
   }
 }
 
@@ -79,7 +136,7 @@ function fallarPareja(primera, segunda) {
   estado.bloqueado = true;
   mostrarMensaje("💨 No coinciden… memoriza dónde estaban.", "fallo");
 
-  setTimeout(() => {
+  estado.espera = setTimeout(() => {
     primera.classList.remove("carta--girada");
     segunda.classList.remove("carta--girada");
     estado.giradas = [];
@@ -101,12 +158,26 @@ function comprobarPareja() {
 }
 
 function girarCarta(carta) {
+  if (estado.intervalo === null) {
+    iniciarTemporizador();
+  }
+
   carta.classList.add("carta--girada");
   estado.giradas.push(carta);
 
   if (estado.giradas.length === 2) {
     comprobarPareja();
   }
+}
+
+function nuevaPartida() {
+  detenerTemporizador();
+  clearTimeout(estado.espera);
+  estado = crearEstadoInicial(selectorNivel.value);
+  resultado.hidden = true;
+  pintarTablero();
+  actualizarMarcador();
+  mostrarMensaje("Gira dos cartas para empezar.", "neutro");
 }
 
 function manejarClicTablero(event) {
@@ -118,6 +189,8 @@ function manejarClicTablero(event) {
 }
 
 tablero.addEventListener("click", manejarClicTablero);
+selectorNivel.addEventListener("change", nuevaPartida);
+botonNuevaPartida.addEventListener("click", nuevaPartida);
+botonRevancha.addEventListener("click", nuevaPartida);
 
-pintarTablero();
-actualizarMarcador();
+nuevaPartida();
