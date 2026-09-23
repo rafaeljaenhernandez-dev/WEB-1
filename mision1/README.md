@@ -1,28 +1,14 @@
-# WEB-1 · Web Development I, the Client
+# 🔮 El oráculo de los números
 
-Prácticas de la asignatura **Web Development I** (U-tad), Unidad 1: Introducción a JavaScript.
-
-## Estructura
-
-```
-WEB-1/
-├── mision1/          El oráculo de los números (ejercicio de clase)
-└── despertarDelDOM/  M1 · El Despertar del DOM: Memoria Arcana (entrega)
-```
-
-## M1 · El Despertar del DOM · 🔮 Memoria Arcana
-
-Juego de memoria de cartas en JavaScript puro, con dificultad seleccionable, temporizador, rachas, un hechizo de revelación, récord por dificultad y modo nocturno con la tecla **N**. Toda la información está en [despertarDelDOM/README.md](despertarDelDOM/README.md).
-
-## Misión 1 · 🔮 El oráculo de los números
+Misión 1 de **Web Development I** (U-tad), Unidad 1: Introducción a JavaScript.
 
 Juego en el navegador en el que hay que adivinar un número secreto del 1 al 100.
 
-### Cómo ejecutarlo
+## Cómo ejecutarlo
 
-Abre `mision1/index.html` en el navegador. No hace falta instalar nada ni usar servidor.
+Abre `index.html` en el navegador. No hace falta instalar nada ni usar servidor.
 
-### Cómo se juega
+## Cómo se juega
 
 1. Escribe un número del 1 al 100 y pulsa **Consultar al oráculo** (o la tecla Enter).
 2. El oráculo responde si su número es **mayor** o **menor** que el tuyo.
@@ -30,7 +16,7 @@ Abre `mision1/index.html` en el navegador. No hace falta instalar nada ni usar s
 4. La partida acaba al acertar o al agotar los intentos. En ese caso se revela el número.
 5. **Nueva profecía** empieza otra partida con un número nuevo.
 
-### Qué se ha hecho
+## Qué se ha hecho
 
 **HTML (`index.html`)**
 - Estructura semántica con `header`, `main`, `section`, `aside` y `footer`.
@@ -57,6 +43,6 @@ Abre `mision1/index.html` en el navegador. No hace falta instalar nada ni usar s
 - Reinicio completo del estado con **Nueva profecía**.
 - Eventos: `click` en los dos botones y `keydown` (Enter) en el input.
 
-### Conceptos practicados
+## Conceptos practicados
 
 `const` / `let` · `Number()` · `Number.isInteger()` · condicionales `if/else` · `querySelector` · `addEventListener` · `textContent` / `className` · plantillas de texto (template literals) · arrays (`push`, `join`) · atributo `defer`.
