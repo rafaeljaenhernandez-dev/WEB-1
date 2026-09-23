@@ -7,15 +7,20 @@ const NIVELES = {
 };
 
 const DURACION_FALLO = 800;
+const DURACION_HECHIZO = 1500;
+const PENALIZACION_HECHIZO = 5;
 
 const tablero = document.querySelector("#tablero");
 const mensaje = document.querySelector("#mensaje");
 const selectorNivel = document.querySelector("#nivel");
 const botonNuevaPartida = document.querySelector("#nueva-partida");
+const botonHechizo = document.querySelector("#hechizo");
 const textoMovimientos = document.querySelector("#movimientos");
 const textoTiempo = document.querySelector("#tiempo");
 const textoParejas = document.querySelector("#parejas");
+const textoRecord = document.querySelector("#record");
 const resultado = document.querySelector("#resultado");
+const tituloResultado = document.querySelector("#resultado-titulo");
 const resumen = document.querySelector("#resumen");
 const botonRevancha = document.querySelector("#revancha");
 
@@ -26,6 +31,8 @@ function crearEstadoInicial(nivel) {
     parejas: 0,
     movimientos: 0,
     segundos: 0,
+    racha: 0,
+    hechizoUsado: false,
     bloqueado: false,
     terminada: false,
     intervalo: null,
@@ -94,6 +101,44 @@ function actualizarMarcador() {
   textoParejas.textContent = `${estado.parejas} / ${totalParejas()}`;
 }
 
+function claveRecord(nivel) {
+  return `memoria-arcana-record-${nivel}`;
+}
+
+function leerRecord(nivel) {
+  try {
+    const guardado = localStorage.getItem(claveRecord(nivel));
+    return guardado ? JSON.parse(guardado) : null;
+  } catch {
+    return null;
+  }
+}
+
+function guardarRecord(nivel, record) {
+  try {
+    localStorage.setItem(claveRecord(nivel), JSON.stringify(record));
+  } catch {
+    mostrarMensaje("⚠️ No se ha podido guardar el récord en este navegador.", "info");
+  }
+}
+
+function esMejorQue(partida, record) {
+  if (record === null) {
+    return true;
+  }
+  if (partida.movimientos !== record.movimientos) {
+    return partida.movimientos < record.movimientos;
+  }
+  return partida.segundos < record.segundos;
+}
+
+function actualizarRecord() {
+  const record = leerRecord(estado.nivel);
+  textoRecord.textContent = record
+    ? `${record.movimientos} mov · ${formatearTiempo(record.segundos)}`
+    : "—";
+}
+
 function iniciarTemporizador() {
   estado.intervalo = setInterval(() => {
     estado.segundos++;
@@ -109,8 +154,18 @@ function detenerTemporizador() {
 function terminarPartida() {
   estado.terminada = true;
   detenerTemporizador();
-  mostrarMensaje("🎉 ¡Has encontrado todas las parejas!", "exito");
-  resumen.textContent = `Lo has conseguido en ${estado.movimientos} movimientos y ${formatearTiempo(estado.segundos)}.`;
+  botonHechizo.disabled = true;
+
+  const partida = { movimientos: estado.movimientos, segundos: estado.segundos };
+  const esRecord = esMejorQue(partida, leerRecord(estado.nivel));
+
+  if (esRecord) {
+    guardarRecord(estado.nivel, partida);
+    actualizarRecord();
+  }
+
+  tituloResultado.textContent = esRecord ? "🏆 ¡Nuevo récord!" : "🎉 ¡Tablero completado!";
+  resumen.textContent = `Lo has conseguido en ${partida.movimientos} movimientos y ${formatearTiempo(partida.segundos)}.`;
   resultado.hidden = false;
 }
 
@@ -125,7 +180,10 @@ function acertarPareja(primera, segunda) {
   segunda.disabled = true;
   estado.giradas = [];
   estado.parejas++;
-  mostrarMensaje("✨ ¡Pareja encontrada!", "exito");
+  estado.racha++;
+
+  const texto = estado.racha > 1 ? `🔥 ¡Racha x${estado.racha}!` : "✨ ¡Pareja encontrada!";
+  mostrarMensaje(texto, "exito");
 
   if (estado.parejas === totalParejas()) {
     terminarPartida();
@@ -133,6 +191,7 @@ function acertarPareja(primera, segunda) {
 }
 
 function fallarPareja(primera, segunda) {
+  estado.racha = 0;
   estado.bloqueado = true;
   mostrarMensaje("💨 No coinciden… memoriza dónde estaban.", "fallo");
 
@@ -157,10 +216,34 @@ function comprobarPareja() {
   actualizarMarcador();
 }
 
-function girarCarta(carta) {
+function arrancarSiHaceFalta() {
   if (estado.intervalo === null) {
     iniciarTemporizador();
   }
+}
+
+function lanzarHechizo() {
+  if (estado.hechizoUsado || estado.bloqueado || estado.terminada) {
+    return;
+  }
+
+  arrancarSiHaceFalta();
+  estado.hechizoUsado = true;
+  estado.bloqueado = true;
+  estado.movimientos += PENALIZACION_HECHIZO;
+  botonHechizo.disabled = true;
+  tablero.classList.add("tablero--revelado");
+  mostrarMensaje(`🔮 Hechizo lanzado: +${PENALIZACION_HECHIZO} movimientos. ¡Memoriza!`, "info");
+  actualizarMarcador();
+
+  estado.espera = setTimeout(() => {
+    tablero.classList.remove("tablero--revelado");
+    estado.bloqueado = false;
+  }, DURACION_HECHIZO);
+}
+
+function girarCarta(carta) {
+  arrancarSiHaceFalta();
 
   carta.classList.add("carta--girada");
   estado.giradas.push(carta);
@@ -175,8 +258,11 @@ function nuevaPartida() {
   clearTimeout(estado.espera);
   estado = crearEstadoInicial(selectorNivel.value);
   resultado.hidden = true;
+  botonHechizo.disabled = false;
+  tablero.classList.remove("tablero--revelado");
   pintarTablero();
   actualizarMarcador();
+  actualizarRecord();
   mostrarMensaje("Gira dos cartas para empezar.", "neutro");
 }
 
@@ -192,5 +278,6 @@ tablero.addEventListener("click", manejarClicTablero);
 selectorNivel.addEventListener("change", nuevaPartida);
 botonNuevaPartida.addEventListener("click", nuevaPartida);
 botonRevancha.addEventListener("click", nuevaPartida);
+botonHechizo.addEventListener("click", lanzarHechizo);
 
 nuevaPartida();

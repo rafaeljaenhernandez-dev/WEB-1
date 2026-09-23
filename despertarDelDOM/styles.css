@@ -109,6 +109,12 @@ select {
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
+.boton--secundario {
+  background: var(--acento-suave);
+  color: var(--acento);
+  border: 1px solid var(--acento);
+}
+
 .boton:hover:not(:disabled) {
   transform: translateY(-1px);
 }
@@ -223,11 +229,13 @@ select {
   transform: rotateY(180deg);
 }
 
-.carta--girada .carta__dorso {
+.carta--girada .carta__dorso,
+.tablero--revelado .carta__dorso {
   transform: rotateY(-180deg);
 }
 
-.carta--girada .carta__frente {
+.carta--girada .carta__frente,
+.tablero--revelado .carta__frente {
   transform: rotateY(0);
 }
 
