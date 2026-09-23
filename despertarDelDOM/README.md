@@ -35,12 +35,25 @@ despertarDelDOM/
 
 ## Uso de IA
 
-Usé **Claude Code** (modelo Claude Opus 5.5) dentro de VS Code. La IA generó el código de las fases 1 a 5, el bonus y un primer borrador de este README, y fue haciendo un commit al cerrar cada fase.
+Usé **Claude Code** (modelo Claude Opus 5.5) dentro de VS Code como pareja de programación.
 
-Prompt real con el que empecé: le pegué el enunciado completo de la M1 y le pedí:
+Prompt con el que empecé: le pegué el enunciado completo de la M1 y le pedí:
 "en la carpeta despertarDelDOM quiero que hagas esto ten muy en cuenta lo de los commits y eso cumple todo a rajatabla".
 
-Cómo se verificó:
+El proyecto no se hizo de golpe. Se construyó en fases pequeñas y cada una terminaba con algo visible funcionando y su propio commit:
+
+| Fase | Qué se añadió | Commit |
+|------|---------------|--------|
+| 1 | Estructura HTML semántica y estilos base con variables CSS | `Fase 1: estructura HTML y estilos base…` |
+| 2 | Tablero generado con `createElement` y `DocumentFragment`, barajado Fisher-Yates y animación de giro | `Fase 2: tablero generado con createElement…` |
+| 3 | Objeto `estado`, comprobación de parejas, bloqueo del tablero mientras se ocultan las cartas y marcador | `Fase 3: comprobar parejas…` |
+| 4 | Selector de dificultad, temporizador, fin de partida y «Jugar otra vez» | `Fase 4: temporizador, fin de partida…` |
+| 5 | Mejoras propias: rachas, hechizo de revelación y récord por dificultad en `localStorage` | `Fase 5: rachas, hechizo…` |
+| Bonus | Modo nocturno con la tecla secreta N | `Bonus: modo nocturno…` |
+
+Al cerrar cada fase se comprobó que el JavaScript no tenía errores de sintaxis antes de hacer el commit. Cada fase partía del código de la anterior, sin rehacerlo.
+
+Cómo se verificó el resultado final:
 - Se cargó la página en Chrome sin interfaz (headless) con un script de prueba aparte, que no está en el repositorio, y que jugaba una partida completa. Comprobaba 23 casos: fallos, pareja acertada, doble clic en la misma carta, bloqueo mientras se ocultan las cartas, racha, hechizo (+5 movimientos), fin de partida, récord por dificultad, temporizador parado al acabar, cambio a 20 cartas en Archimago, la tecla N y el caso de pulsar «Nueva partida» mientras dos cartas fallidas todavía se están ocultando.
 - Se revisaron capturas en modo claro y en modo nocturno.
 - Se buscó en el código que no hubiera `var`, `innerHTML`, `onclick` ni `console.log`.
