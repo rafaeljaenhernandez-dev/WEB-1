@@ -6,11 +6,13 @@ Prácticas de la asignatura **Web Development I** (U-tad), Unidad 1: Introducci�
 
 ```
 WEB-1/
-└── mision1/
-    ├── index.html
-    ├── index.css
-    └── index.js
+├── mision1/          El oráculo de los números (ejercicio de clase)
+└── despertarDelDOM/  M1 · El Despertar del DOM: Memoria Arcana (entrega)
 ```
+
+## M1 · El Despertar del DOM · 🔮 Memoria Arcana
+
+Juego de memoria de cartas en JavaScript puro, con dificultad seleccionable, temporizador, rachas, un hechizo de revelación, récord por dificultad y modo nocturno con la tecla **N**. Toda la información está en [despertarDelDOM/README.md](despertarDelDOM/README.md).
 
 ## Misión 1 · 🔮 El oráculo de los números
 
