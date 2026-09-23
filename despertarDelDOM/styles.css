@@ -98,10 +98,59 @@ h1 {
 }
 
 .tablero {
-  min-height: 200px;
-  padding: 16px;
-  border: 2px dashed var(--borde);
-  border-radius: 16px;
+  --columnas: 4;
+  display: grid;
+  grid-template-columns: repeat(var(--columnas), 1fr);
+  gap: 12px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.carta {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  perspective: 800px;
+}
+
+.carta:focus-visible {
+  outline: 3px solid var(--oro);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+.carta__cara {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  transition: transform 0.4s ease;
+  font-size: clamp(1.6rem, 6vw, 2.6rem);
+}
+
+.carta__dorso {
+  background: linear-gradient(145deg, #3a2168, var(--acento));
+  color: var(--oro);
+  box-shadow: inset 0 0 0 3px rgba(217, 164, 65, 0.6);
+}
+
+.carta__frente {
+  background: #fffdf8;
+  border: 2px solid var(--borde);
+  transform: rotateY(180deg);
+}
+
+.carta--girada .carta__dorso {
+  transform: rotateY(-180deg);
+}
+
+.carta--girada .carta__frente {
+  transform: rotateY(0);
 }
 
 .pie {
