@@ -58,7 +58,6 @@ Cómo se verificó el resultado final:
 - Se revisaron capturas en modo claro y en modo nocturno.
 - Se buscó en el código que no hubiera `var`, `innerHTML`, `onclick` ni `console.log`.
 
-Escrito a mano: _(pendiente: añade aquí lo que cambies o escribas tú mismo)_.
 
 ## Autopsia
 
