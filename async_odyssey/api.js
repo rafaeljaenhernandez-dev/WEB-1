@@ -19,12 +19,36 @@ function traducirError(error) {
   return new Error("Sin conexión. Revisa tu red.");
 }
 
+// ----- Caché en localStorage (bonus): cada URL ya pedida se guarda un día -----
+const CADUCIDAD = 24 * 60 * 60 * 1000; // un día en milisegundos
+
+function leerCache(url) {
+  try {
+    const guardado = JSON.parse(localStorage.getItem(`async-odyssey:${url}`));
+    return guardado && Date.now() - guardado.fecha < CADUCIDAD ? guardado.datos : null;
+  } catch {
+    return null; // JSON roto o localStorage bloqueado: como si no hubiera caché
+  }
+}
+
+function guardarCache(url, datos) {
+  try {
+    localStorage.setItem(`async-odyssey:${url}`, JSON.stringify({ fecha: Date.now(), datos }));
+  } catch {
+    // almacenamiento lleno o bloqueado: la app sigue funcionando sin caché
+  }
+}
+
 async function pedirJSON(url) {
+  const enCache = leerCache(url);
+  if (enCache) return enCache; // ya la teníamos: no se repite la petición
   try {
     const respuesta = await fetch(url, { signal: AbortSignal.timeout(10000) });
     // fetch no rechaza con un 404 o un 500: hay que comprobar response.ok
     if (!respuesta.ok) throw new ErrorHttp(respuesta.status);
-    return await respuesta.json();
+    const datos = await respuesta.json();
+    guardarCache(url, datos);
+    return datos;
   } catch (error) {
     throw traducirError(error);
   }
