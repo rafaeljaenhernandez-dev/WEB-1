@@ -1,6 +1,6 @@
 // ===== Módulo principal: une la API, la lógica y el render =====
-import { pedirLista, pedirFicha } from "./api.js";
-import { limpiarLista, filtrar, ordenar, aFicha } from "./logica.js";
+import { pedirLista, pedirTipo, pedirFicha } from "./api.js";
+import { CLAVES_TIPOS, tiposPorId, limpiarLista, filtrar, ordenar, tipoMasComun, aFicha } from "./logica.js";
 import * as vista from "./render.js";
 
 const REGIONES = [
@@ -25,14 +25,18 @@ const estado = {
 let numeroLista = 0;
 let numeroFicha = 0;
 
+// Los 18 tipos se piden una sola vez y a la vez. allSettled nunca rechaza:
+// si falla algún tipo, esos Pokémon salen sin color, pero la lista se pinta igual
+const tiposListos = Promise.allSettled(CLAVES_TIPOS.map(pedirTipo)).then(tiposPorId);
+
 async function cargarRegion(region) {
   estado.region = region;
   const miLista = ++numeroLista;
   vista.pintarListaCargando(region.nombre);
   try {
-    const pokemons = limpiarLista(await pedirLista(region.desde, region.hasta));
+    const [resultados, tipos] = await Promise.all([pedirLista(region.desde, region.hasta), tiposListos]);
     if (miLista !== numeroLista) return; // mientras esperábamos se eligió otra región
-    estado.pokemons = pokemons;
+    estado.pokemons = limpiarLista(resultados, tipos);
     refrescar(true);
   } catch (error) {
     if (miLista === numeroLista) vista.pintarListaError(error.message);
@@ -40,10 +44,10 @@ async function cargarRegion(region) {
 }
 
 function refrescar(animar = false) {
-  const { texto, orden } = Object.fromEntries(new FormData(mandos));
-  const visibles = ordenar(filtrar(estado.pokemons, texto), orden);
-  vista.pintarResumen(visibles.length, estado.pokemons.length, estado.region.nombre);
-  if (visibles.length === 0) vista.pintarListaVacia(texto, estado.region.nombre);
+  const filtros = Object.fromEntries(new FormData(mandos)); // { region, texto, tipo, orden }
+  const visibles = ordenar(filtrar(estado.pokemons, filtros), filtros.orden);
+  vista.pintarResumen(visibles.length, estado.pokemons.length, estado.region.nombre, tipoMasComun(visibles));
+  if (visibles.length === 0) vista.pintarListaVacia(filtros.texto, estado.region.nombre);
   else vista.pintarLista(visibles, animar, estado.elegido.id);
 }
 
@@ -60,7 +64,7 @@ async function elegir({ id, nombre }) {
   }
 }
 
-// Cambiar de región pide datos nuevos; buscar u ordenar solo vuelve a pintar
+// Cambiar de región pide datos nuevos; buscar, filtrar u ordenar solo vuelve a pintar
 mandos.addEventListener("input", (evento) => {
   if (evento.target.name === "region") cargarRegion(REGIONES[Number(evento.target.value)]);
   else refrescar();
@@ -80,6 +84,7 @@ document.addEventListener("click", (evento) => {
 });
 
 vista.pintarRegiones(REGIONES);
+vista.pintarOpcionesTipo(CLAVES_TIPOS);
 // La lista y la ficha arrancan a la vez: ninguna espera a la otra
 cargarRegion(estado.region);
 elegir(estado.elegido);

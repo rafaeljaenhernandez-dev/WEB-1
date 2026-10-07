@@ -6,27 +6,33 @@
     <meta name="color-scheme" content="light" />
     <meta
       name="description"
-      content="Async Odyssey: una Pokédex de bolsillo con la PokeAPI. Elige región, busca y abre la ficha de cualquier Pokémon."
+      content="Async Odyssey: una Pokédex con la PokeAPI. Elige región, busca, filtra por tipo y abre la ficha de cualquier Pokémon."
     />
-    <title>Async Odyssey · Pokédex de bolsillo</title>
+    <title>Async Odyssey · Pokédex</title>
     <link rel="icon" href="data:," />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Pixelify+Sans:wght@400..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap"
     />
     <link rel="stylesheet" href="/styles.css" />
     <script type="module" src="/main.js"></script>
   </head>
   <body>
     <header class="cabecera">
-      <h1 class="titulo">Async Odyssey</h1>
-      <p class="lema">Pokédex de bolsillo: elige una región, busca y abre la ficha de cualquier Pokémon.</p>
+      <div class="cabecera__dentro">
+        <span class="lente" aria-hidden="true"></span>
+        <span class="luces" aria-hidden="true"><span></span><span></span><span></span></span>
+        <div>
+          <h1 class="titulo">Async Odyssey</h1>
+          <p class="lema">La Pokédex: elige una región, busca, filtra por tipo y abre la ficha de cualquier Pokémon.</p>
+        </div>
+      </div>
     </header>
 
     <main class="consola">
-      <section id="ficha" class="pantalla" aria-live="polite" aria-label="Ficha del Pokémon"></section>
+      <section id="ficha" class="ficha" aria-live="polite" aria-label="Ficha del Pokémon"></section>
 
       <section class="pokedex" aria-labelledby="titulo-pokedex">
         <h2 id="titulo-pokedex" class="pokedex__titulo">Pokédex</h2>
@@ -38,6 +44,12 @@
           <label class="campo campo--texto">
             <span class="campo__nombre">Busca por nombre o número</span>
             <input type="search" name="texto" placeholder="pikachu, 25, #150…" autocomplete="off" />
+          </label>
+          <label class="campo">
+            <span class="campo__nombre">Tipo</span>
+            <select id="tipo" name="tipo">
+              <option value="todos">Todos los tipos</option>
+            </select>
           </label>
           <label class="campo">
             <span class="campo__nombre">Orden</span>

@@ -59,10 +59,16 @@ export async function pedirLista(desde, hasta) {
   return Array.isArray(datos.results) ? datos.results : [];
 }
 
+// /type/{tipo} trae también movimientos y daños: solo guardamos qué Pokémon son de ese tipo
+const recortarTipo = ({ pokemon }) =>
+  Array.isArray(pokemon) ? pokemon.map((p) => ({ url: p?.pokemon?.url, slot: p?.slot })) : [];
+
+export async function pedirTipo(tipo) {
+  return pedirJSON(`${POKEAPI}/type/${tipo}`, recortarTipo);
+}
+
 // /pokemon/{id} pesa unos 250 KB (trae todos sus movimientos): guardamos solo lo útil
-const recortarPokemon = ({ id, name, height, weight, types, stats, sprites }) => ({
-  id, name, height, weight, types, stats, sprites: { front_default: sprites?.front_default },
-});
+const recortarPokemon = ({ id, name, height, weight, types, stats }) => ({ id, name, height, weight, types, stats });
 
 const enEspanol = (lista) => (Array.isArray(lista) ? lista.filter((e) => e?.language?.name === "es") : []);
 const recortarEspecie = ({ names, genera, flavor_text_entries }) => ({

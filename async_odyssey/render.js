@@ -1,9 +1,10 @@
 // ===== Módulo render: solo toca el DOM, no sabe nada de la red =====
-import { numero } from "./logica.js";
+import { numero, nombreTipo } from "./logica.js";
 
 const lista = document.querySelector("#lista");
 const resumen = document.querySelector("#resumen");
 const regiones = document.querySelector("#regiones");
+const selectorTipo = document.querySelector("#tipo");
 const ficha = document.querySelector("#ficha");
 
 function crear(etiqueta, clase, texto) {
@@ -20,9 +21,33 @@ function crearBoton(texto, accion) {
   return boton;
 }
 
+// Etiqueta de tipo: data-tipo decide su color en el CSS
+function crearTipos(tipos) {
+  const contenedor = crear("ul", "tipos");
+  contenedor.append(
+    ...tipos.map((tipo) => {
+      const etiqueta = crear("li", "tipo", nombreTipo(tipo));
+      etiqueta.dataset.tipo = tipo;
+      return etiqueta;
+    }),
+  );
+  return contenedor;
+}
+
+function crearArte(src, alt, clase) {
+  const imagen = crear("img", clase);
+  imagen.src = src;
+  imagen.alt = alt;
+  imagen.width = 475;
+  imagen.height = 475;
+  imagen.addEventListener("load", () => imagen.classList.add("lista"), { once: true });
+  imagen.addEventListener("error", () => imagen.classList.add("rota"), { once: true });
+  return imagen;
+}
+
 // Cambia el estado de una zona (cargando, error, vacio, datos) y su contenido
 function pintar(zona, tipo, ...nodos) {
-  zona.dataset.tipo = tipo;
+  zona.dataset.estado = tipo;
   zona.setAttribute("aria-busy", tipo === "cargando");
   zona.replaceChildren(...nodos);
 }
@@ -42,19 +67,30 @@ export function pintarRegiones(lista) {
   regiones.append(...chips);
 }
 
-export function pintarResumen(visibles, total, region) {
+export function pintarOpcionesTipo(claves) {
+  const opciones = claves.map((clave) => {
+    const opcion = crear("option", null, nombreTipo(clave));
+    opcion.value = clave;
+    return opcion;
+  });
+  selectorTipo.append(...opciones);
+}
+
+export function pintarResumen(visibles, total, region, { tipo, veces }) {
   if (total === 0) resumen.textContent = "";
-  else if (visibles === total) resumen.textContent = `${total} Pokémon en ${region}.`;
-  else resumen.textContent = `${visibles} de ${total} Pokémon de ${region}.`;
+  else {
+    const cuantos = visibles === total ? `${total} Pokémon en ${region}` : `${visibles} de ${total} Pokémon de ${region}`;
+    resumen.textContent = tipo ? `${cuantos} · el tipo más común es ${nombreTipo(tipo)} (${veces}).` : `${cuantos}.`;
+  }
 }
 
 // ----- Lista de la región -----
 export function pintarListaCargando(region) {
   resumen.textContent = "";
-  const huecos = Array.from({ length: 24 }, () => crear("span", "pokemon pokemon--fantasma"));
+  const huecos = Array.from({ length: 12 }, () => crear("span", "pokemon pokemon--fantasma"));
   const rejilla = crear("div", "rejilla");
   rejilla.append(...huecos);
-  pintar(lista, "cargando", crear("p", "aviso", `Conectando con ${region}…`), rejilla);
+  pintar(lista, "cargando", crear("p", "aviso", `Buscando los Pokémon de ${region}…`), rejilla);
 }
 
 export function pintarListaError(mensaje) {
@@ -70,26 +106,27 @@ export function pintarListaError(mensaje) {
 
 export function pintarListaVacia(texto, region) {
   const mensaje = texto.trim()
-    ? `Ningún Pokémon de ${region} coincide con «${texto.trim()}».`
-    : `${region} ha llegado sin Pokémon. Prueba con otra región.`;
-  pintar(lista, "vacio", crear("p", "aviso__titulo", "Hierba alta vacía"), crear("p", "aviso", mensaje));
+    ? `Ningún Pokémon de ${region} coincide con «${texto.trim()}» y ese tipo.`
+    : `No hay Pokémon de ${region} con ese tipo. Prueba con otro.`;
+  pintar(lista, "vacio", crear("p", "aviso__titulo", "Ni rastro"), crear("p", "aviso", mensaje));
 }
 
 function crearPokemon(pokemon, posicion, elegidoId) {
-  const sprite = crear("img", "pokemon__sprite");
-  sprite.src = pokemon.sprite;
-  sprite.alt = "";
-  sprite.width = 96;
-  sprite.height = 96;
-  sprite.loading = "lazy";
-  sprite.addEventListener("error", () => sprite.classList.add("pokemon__sprite--roto"), { once: true });
-
   const boton = crear("button", "pokemon");
   boton.type = "button";
   boton.dataset.id = pokemon.id;
+  if (pokemon.tipos[0]) boton.dataset.tipo = pokemon.tipos[0]; // el color de la tarjeta es el del tipo principal
   boton.setAttribute("aria-pressed", pokemon.id === elegidoId);
   boton.style.setProperty("--orden", posicion);
-  boton.append(sprite, crear("span", "pokemon__numero", numero(pokemon.id)), crear("span", "pokemon__nombre", pokemon.nombre));
+
+  const arte = crearArte(pokemon.arte, "", "pokemon__arte");
+  arte.loading = "lazy";
+  boton.append(
+    arte,
+    crear("span", "pokemon__numero", numero(pokemon.id)),
+    crear("span", "pokemon__nombre", pokemon.nombre),
+    crearTipos(pokemon.tipos),
+  );
   return boton;
 }
 
@@ -105,17 +142,19 @@ export function marcarElegido(id) {
   lista.querySelectorAll(".pokemon[data-id]").forEach((boton) => boton.setAttribute("aria-pressed", Number(boton.dataset.id) === id));
 }
 
-// ----- Ficha (la pantalla de la Game Boy) -----
+// ----- Ficha -----
 export function pintarFichaCargando(nombre) {
-  pintar(ficha, "cargando", crear("p", "pantalla__nombre", nombre), crear("p", "pantalla__parpadeo", "Leyendo datos…"));
+  delete ficha.dataset.tipo;
+  pintar(ficha, "cargando", crear("div", "ficha__foco"), crear("p", "ficha__nombre", nombre), crear("p", "aviso", "Consultando la Pokédex…"));
 }
 
 export function pintarFichaError(nombre, mensaje) {
+  delete ficha.dataset.tipo;
   pintar(
     ficha,
     "error",
-    crear("p", "pantalla__nombre", nombre),
-    crear("p", "pantalla__texto", `No se ha podido leer su ficha. ${mensaje}`),
+    crear("p", "ficha__nombre", nombre),
+    crear("p", "aviso", `No se ha podido leer su ficha. ${mensaje}`),
     crearBoton("Volver a intentarlo", "reintentar-ficha"),
   );
 }
@@ -129,28 +168,28 @@ function crearStat({ nombre, valor }) {
 }
 
 export function pintarFicha(datos) {
-  const titulo = crear("h2", "pantalla__nombre", datos.nombre);
-  titulo.prepend(crear("span", "pantalla__numero", `${numero(datos.id)} `));
+  if (datos.tipos[0]) ficha.dataset.tipo = datos.tipos[0];
 
-  const sprite = crear("img", "pantalla__sprite");
-  sprite.src = datos.sprite;
-  sprite.alt = datos.nombre;
-  sprite.width = 96;
-  sprite.height = 96;
-  sprite.addEventListener("load", () => sprite.classList.add("lista"), { once: true });
-  sprite.addEventListener("error", () => sprite.replaceWith(crear("p", "pantalla__sinsprite", "Sin imagen")), { once: true });
-
-  const tipos = crear("ul", "tipos");
-  tipos.append(...datos.tipos.map((tipo) => crear("li", "tipo", tipo)));
-
-  const medidas = crear("p", "pantalla__medidas", `${datos.categoria} · ${datos.altura} · ${datos.peso}`);
+  const foco = crear("div", "ficha__foco");
+  foco.append(crearArte(datos.arte, datos.nombre, "ficha__arte"));
 
   const stats = crear("ul", "stats");
   stats.append(...datos.stats.map(crearStat));
 
-  const total = crear("p", "pantalla__total", `Total ${datos.total} · Destaca en ${datos.mejor.nombre}`);
+  const titulo = crear("h2", "ficha__nombre", datos.nombre);
+  titulo.append(crear("span", "ficha__numero", numero(datos.id)));
 
-  pintar(ficha, "datos", titulo, sprite, tipos, medidas, crear("p", "pantalla__texto", datos.descripcion), stats, total);
+  pintar(
+    ficha,
+    "datos",
+    foco,
+    titulo,
+    crearTipos(datos.tipos),
+    crear("p", "ficha__medidas", `${datos.categoria} · ${datos.altura} · ${datos.peso}`),
+    crear("p", "ficha__texto", datos.descripcion),
+    stats,
+    crear("p", "ficha__total", `Total ${datos.total} · Destaca en ${datos.mejor.nombre}`),
+  );
 }
 
 // En móvil la ficha queda arriba: si no se ve, sube hasta ella
