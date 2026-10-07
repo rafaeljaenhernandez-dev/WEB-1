@@ -1,68 +1,85 @@
 // ===== Módulo principal: une la API, la lógica y el render =====
-import { pedirModelos, pedirFicha } from "./api.js";
-import { unirRespuestas, filtrar, ordenar, agruparPorMarca, resumir, aFicha } from "./logica.js";
+import { pedirLista, pedirFicha } from "./api.js";
+import { limpiarLista, filtrar, ordenar, aFicha } from "./logica.js";
 import * as vista from "./render.js";
 
-const MARCAS = ["Ferrari", "Lamborghini", "Porsche", "McLaren", "Aston Martin", "Bugatti", "Koenigsegg", "Pagani", "Lotus", "Maserati"];
+const REGIONES = [
+  { nombre: "Kanto", desde: 1, hasta: 151 },
+  { nombre: "Johto", desde: 152, hasta: 251 },
+  { nombre: "Hoenn", desde: 252, hasta: 386 },
+  { nombre: "Sinnoh", desde: 387, hasta: 493 },
+  { nombre: "Teselia", desde: 494, hasta: 649 },
+  { nombre: "Kalos", desde: 650, hasta: 721 },
+  { nombre: "Alola", desde: 722, hasta: 809 },
+  { nombre: "Galar", desde: 810, hasta: 905 },
+  { nombre: "Paldea", desde: 906, hasta: 1025 },
+];
 
 const mandos = document.querySelector("#mandos");
 const estado = {
-  modelos: [],
-  caidas: [],
-  elegido: { id: "mclaren-p1", marca: "McLaren", nombre: "P1" }, // el coche que abre la vitrina
+  region: REGIONES[0],
+  pokemons: [],
+  elegido: { id: 25, nombre: "Pikachu" }, // el Pokémon que abre la ficha
 };
-let numeroFicha = 0; // para descartar fichas que llegan tarde
+// Contadores para descartar respuestas que llegan tarde
+let numeroLista = 0;
+let numeroFicha = 0;
 
-async function cargarGaraje() {
-  vista.pintarGarajeCargando(MARCAS.length);
-  // allSettled espera a todas y nunca rechaza: si una marca falla, el resto se pinta igual
-  const respuestas = await Promise.allSettled(MARCAS.map(pedirModelos));
-  Object.assign(estado, unirRespuestas(MARCAS, respuestas));
-  refrescar(true);
+async function cargarRegion(region) {
+  estado.region = region;
+  const miLista = ++numeroLista;
+  vista.pintarListaCargando(region.nombre);
+  try {
+    const pokemons = limpiarLista(await pedirLista(region.desde, region.hasta));
+    if (miLista !== numeroLista) return; // mientras esperábamos se eligió otra región
+    estado.pokemons = pokemons;
+    refrescar(true);
+  } catch (error) {
+    if (miLista === numeroLista) vista.pintarListaError(error.message);
+  }
 }
 
 function refrescar(animar = false) {
-  if (estado.modelos.length === 0) {
-    vista.pintarGarajeError("Ninguna marca ha contestado. Comprueba tu conexión y vuelve a intentarlo.");
-    return;
-  }
-  const filtros = Object.fromEntries(new FormData(mandos)); // { texto, orden, marca }
-  const visibles = ordenar(filtrar(estado.modelos, filtros), filtros.orden);
-  vista.pintarResumen(resumir(visibles), estado.caidas);
-  if (visibles.length === 0) vista.pintarGarajeVacio(filtros.texto);
-  else vista.pintarGaraje(agruparPorMarca(visibles), animar, estado.elegido.id);
+  const { texto, orden } = Object.fromEntries(new FormData(mandos));
+  const visibles = ordenar(filtrar(estado.pokemons, texto), orden);
+  vista.pintarResumen(visibles.length, estado.pokemons.length, estado.region.nombre);
+  if (visibles.length === 0) vista.pintarListaVacia(texto, estado.region.nombre);
+  else vista.pintarLista(visibles, animar, estado.elegido.id);
 }
 
-async function elegir(modelo) {
-  estado.elegido = modelo;
-  vista.marcarElegido(modelo.id);
+async function elegir({ id, nombre }) {
+  estado.elegido = { id, nombre };
+  vista.marcarElegido(id);
   const miFicha = ++numeroFicha;
-  vista.pintarFichaCargando(modelo);
+  vista.pintarFichaCargando(nombre);
   try {
-    const ficha = aFicha(await pedirFicha(modelo.marca, modelo.nombre));
-    // si mientras esperábamos se eligió otro coche, esta ficha ya no vale
-    if (miFicha === numeroFicha) vista.pintarFicha(modelo, ficha);
+    const ficha = aFicha(await pedirFicha(id));
+    if (miFicha === numeroFicha) vista.pintarFicha(ficha);
   } catch (error) {
-    if (miFicha === numeroFicha) vista.pintarFichaError(modelo, error.message);
+    if (miFicha === numeroFicha) vista.pintarFichaError(nombre, error.message);
   }
 }
 
-mandos.addEventListener("input", () => refrescar());
+// Cambiar de región pide datos nuevos; buscar u ordenar solo vuelve a pintar
+mandos.addEventListener("input", (evento) => {
+  if (evento.target.name === "region") cargarRegion(REGIONES[Number(evento.target.value)]);
+  else refrescar();
+});
 mandos.addEventListener("submit", (evento) => evento.preventDefault());
 
-// Delegación: un solo listener para las placas y los botones de reintentar
+// Delegación: un solo listener para los Pokémon y los botones de reintentar
 document.addEventListener("click", (evento) => {
-  const placa = evento.target.closest(".placa[data-id]");
-  if (placa) {
-    elegir(estado.modelos.find((modelo) => modelo.id === placa.dataset.id));
-    vista.enfocarVitrina();
+  const boton = evento.target.closest(".pokemon[data-id]");
+  if (boton) {
+    elegir(estado.pokemons.find((pokemon) => pokemon.id === Number(boton.dataset.id)));
+    vista.enfocarFicha();
   }
   const accion = evento.target.closest("[data-accion]")?.dataset.accion;
-  if (accion === "reintentar-garaje") cargarGaraje();
+  if (accion === "reintentar-lista") cargarRegion(estado.region);
   if (accion === "reintentar-ficha") elegir(estado.elegido);
 });
 
-vista.pintarMarcas(MARCAS);
-// Las dos cargas arrancan a la vez: la vitrina no espera al garaje
-cargarGaraje();
+vista.pintarRegiones(REGIONES);
+// La lista y la ficha arrancan a la vez: ninguna espera a la otra
+cargarRegion(estado.region);
 elegir(estado.elegido);

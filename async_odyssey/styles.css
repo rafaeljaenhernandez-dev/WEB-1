@@ -1,17 +1,23 @@
-/* ===== Tokens: librea Gulf (azul cielo, franja naranja, filete marino) ===== */
+/* ===== Tokens: una Game Boy clásica (carcasa gris, pantalla de 4 verdes) ===== */
 :root {
-  --cielo: oklch(0.83 0.07 228);
-  --cielo-hondo: oklch(0.76 0.08 231);
-  --naranja: oklch(0.72 0.17 52);
-  --tinta: oklch(0.24 0.07 258);
-  --tinta-suave: oklch(0.34 0.07 255);
-  --blanco: oklch(0.985 0.004 230);
-  --rojo: oklch(0.45 0.17 28);
+  --carcasa: oklch(0.87 0.012 95);
+  --carcasa-honda: oklch(0.8 0.014 95);
+  --marco: oklch(0.42 0.025 280);
+  --lcd-0: oklch(0.83 0.13 122);
+  --lcd-1: oklch(0.72 0.15 124);
+  --lcd-2: oklch(0.47 0.09 142);
+  --lcd-3: oklch(0.28 0.06 150);
+  --tinta: oklch(0.32 0.11 275);
+  --tinta-suave: oklch(0.4 0.06 275);
+  --boton: oklch(0.48 0.17 355);
+  --blanco: oklch(0.98 0.005 95);
 
-  --letra: "Saira", system-ui, sans-serif;
-  --ancho: 78rem;
+  --pixel: "Pixelify Sans", ui-monospace, monospace;
+  --letra: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --ancho: 80rem;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --sombra: 0 6px 14px -6px oklch(0.24 0.07 258 / 0.45);
+  /* Filtro que pinta los sprites con los verdes de la pantalla */
+  --verde-gb: grayscale(1) sepia(1) saturate(3) hue-rotate(42deg) brightness(0.68) contrast(1.7);
 }
 
 /* ===== Base ===== */
@@ -21,210 +27,223 @@
   box-sizing: border-box;
 }
 
+html {
+  accent-color: var(--boton);
+  scrollbar-color: var(--marco) var(--carcasa-honda);
+}
+
 body {
   margin: 0;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--cielo);
+  background: var(--carcasa);
   color: var(--tinta);
   font-family: var(--letra);
   font-size: 1.0625rem;
   line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-html {
-  accent-color: var(--naranja);
-  scrollbar-color: var(--tinta) var(--cielo-hondo);
 }
 
 ::selection {
-  background: var(--naranja);
-  color: var(--tinta);
+  background: var(--lcd-1);
+  color: var(--lcd-3);
 }
 
 :focus-visible {
-  outline: 3px solid var(--tinta);
+  outline: 3px solid var(--boton);
   outline-offset: 3px;
 }
 
 a {
-  color: var(--tinta);
-  text-decoration-color: var(--naranja);
-  text-decoration-thickness: 2px;
+  color: inherit;
   text-underline-offset: 0.2em;
 }
 
-/* ===== Cabecera con la franja de la librea ===== */
+/* ===== Cabecera ===== */
 .cabecera {
   width: min(100% - 2rem, var(--ancho));
   margin: 0 auto;
-  padding: clamp(2rem, 6vw, 4rem) 0 1.5rem;
+  padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .titulo {
   margin: 0;
-  font-size: clamp(3rem, 10vw, 6rem);
-  font-weight: 800;
-  font-style: italic;
-  font-stretch: 70%;
-  line-height: 0.9;
-  letter-spacing: -0.02em;
+  font-family: var(--pixel);
+  font-size: clamp(2.75rem, 9vw, 5.5rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
 }
 
 .lema {
-  max-width: 44ch;
-  margin: 0.9rem 0 0;
+  max-width: 46ch;
+  margin: 0.75rem 0 0;
   color: var(--tinta-suave);
   font-size: clamp(1.0625rem, 2vw, 1.25rem);
   text-wrap: pretty;
 }
 
-/* La franja: filete marino, banda naranja, filete marino */
-.cabecera::after {
-  content: "";
-  display: block;
-  height: 26px;
-  margin-top: 2rem;
-  margin-inline: calc(50% - 50vw);
-  background: linear-gradient(
-    var(--tinta) 0 4px,
-    var(--naranja) 4px 22px,
-    var(--tinta) 22px 26px
-  );
-}
-
-/* ===== Pista (contenido) ===== */
-.pista {
+/* ===== Consola: pantalla a la izquierda, Pokédex a la derecha ===== */
+.consola {
   flex: 1;
+  display: grid;
+  grid-template-columns: minmax(19rem, 25rem) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(1.5rem, 4vw, 3rem);
   width: min(100% - 2rem, var(--ancho));
   margin: 0 auto;
   padding-bottom: 4rem;
 }
 
-.garaje__titulo {
-  margin: 2.5rem 0 1rem;
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 800;
-  font-style: italic;
-  font-stretch: 75%;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-/* ===== Vitrina: la ficha del coche elegido ===== */
-.vitrina {
+/* ===== Pantalla (la ficha) ===== */
+.pantalla {
+  position: sticky;
+  top: 1.25rem;
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  align-items: center;
-  gap: clamp(1.5rem, 4vw, 3.5rem);
-  padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(2rem, 5vw, 3.5rem);
+  justify-items: start;
+  gap: 0.6rem;
+  min-height: 34rem;
+  padding: 1.5rem;
+  border: 18px solid var(--marco);
+  border-radius: 12px 12px 48px 12px; /* la esquina redondeada del marco de la Game Boy */
+  background: var(--lcd-0);
+  color: var(--lcd-3);
+  box-shadow: 0 18px 30px -18px oklch(0.3 0.03 280 / 0.6);
   scroll-margin-top: 1rem;
 }
 
-.vitrina__modelo {
+.pantalla > * {
   margin: 0;
-  font-size: clamp(3rem, 8vw, 6rem);
-  font-weight: 800;
-  font-style: italic;
-  font-stretch: 68%;
-  line-height: 0.9;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  text-wrap: balance;
+}
+
+.pantalla__nombre {
+  font-family: var(--pixel);
+  font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.05;
   overflow-wrap: anywhere;
 }
 
-.vitrina__marca {
-  display: block;
-  margin-bottom: 0.35rem;
-  color: var(--tinta-suave);
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-  font-weight: 600;
-  font-stretch: 85%;
-  letter-spacing: 0;
+.pantalla__numero {
+  color: var(--lcd-2);
+  font-family: var(--letra);
+  font-variant-numeric: tabular-nums;
 }
 
-.vitrina__resumen {
-  display: -webkit-box;
-  max-width: 58ch;
-  margin: 1.25rem 0 1.5rem;
-  color: var(--tinta-suave);
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 7;
+.pantalla__parpadeo {
+  font-family: var(--pixel);
+  animation: parpadeo 1s step-end infinite;
+}
+
+/* El sprite llega en los verdes de la pantalla y se colorea */
+.pantalla__sprite {
+  justify-self: center;
+  width: 192px;
+  height: 192px;
+  image-rendering: pixelated;
+  filter: var(--verde-gb);
+  transition: filter 700ms var(--ease-out) 250ms;
+}
+
+.pantalla__sprite.lista {
+  filter: none;
+}
+
+.pantalla__sinsprite {
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  width: 192px;
+  height: 192px;
+  font-family: var(--pixel);
+  color: var(--lcd-2);
+}
+
+.tipos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tipo {
+  padding: 0.15rem 0.7rem;
+  border-radius: 4px;
+  background: var(--lcd-3);
+  color: var(--lcd-0);
+  font-family: var(--pixel);
+  font-size: 0.9375rem;
+}
+
+.pantalla__medidas {
+  font-weight: 700;
+}
+
+.pantalla__texto {
+  max-width: 60ch;
   text-wrap: pretty;
 }
 
-.vitrina[data-tipo="error"] .vitrina__resumen {
-  color: var(--rojo);
-  font-weight: 600;
-}
-
-.vitrina__acciones:empty {
-  display: none;
-}
-
-.vitrina__foto {
-  position: relative;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 3 / 2;
-  margin: 0;
-  border-radius: 18px;
-  background: var(--cielo-hondo);
-  box-shadow: 0 24px 40px -20px oklch(0.24 0.07 258 / 0.55);
-  overflow: hidden;
-}
-
-.vitrina[data-tipo="cargando"] .vitrina__foto {
-  animation: respirar 1s ease-in-out infinite alternate;
-}
-
-/* La foto llega desenfocada y se enfoca, como una cámara al encontrar el coche */
-.vitrina__foto img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  filter: blur(14px);
-  transform: scale(1.04);
-  transition:
-    opacity 400ms var(--ease-out),
-    filter 400ms var(--ease-out),
-    transform 600ms var(--ease-out);
-}
-
-.vitrina__foto img.lista {
-  opacity: 1;
-  filter: blur(0);
-  transform: scale(1);
-}
-
-.vitrina__sinfoto {
-  color: var(--tinta-suave);
-  font-size: 1.25rem;
+.pantalla[data-tipo="error"] .pantalla__texto {
   font-weight: 700;
-  font-style: italic;
-  font-stretch: 80%;
-  text-transform: uppercase;
 }
 
-a.boton {
-  display: inline-block;
-  text-decoration: none;
+/* Estadísticas: barras de bloques, como en la pantalla original */
+.stats {
+  display: grid;
+  gap: 0.3rem;
+  width: 100%;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-/* ===== Mandos: buscador, orden y marcas ===== */
+.stat {
+  display: grid;
+  grid-template-columns: 5.5rem 2.25rem 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.stat__nombre {
+  font-weight: 700;
+}
+
+.stat__valor {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.stat__barra {
+  height: 0.7rem;
+  background: linear-gradient(90deg, var(--lcd-3) calc(var(--valor) / 255 * 100%), var(--lcd-1) 0);
+  border-radius: 2px;
+}
+
+.pantalla__total {
+  color: var(--lcd-2);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== Pokédex: mandos y lista ===== */
+.pokedex__titulo {
+  margin: 0 0 1rem;
+  font-family: var(--pixel);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1;
+}
+
 .mandos {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 1rem 1.25rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .campo {
@@ -241,26 +260,20 @@ a.boton {
 .campo input,
 .campo select {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid var(--tinta);
+  padding: 0.7rem 1rem;
+  border: 2px solid var(--marco);
   border-radius: 10px;
   background: var(--blanco);
   color: var(--tinta);
   font: inherit;
-  caret-color: var(--naranja);
+  caret-color: var(--boton);
 }
 
 .campo input::placeholder {
-  color: oklch(0.5 0.05 250);
+  color: oklch(0.52 0.03 275);
 }
 
-.campo input:focus-visible,
-.campo select:focus-visible {
-  outline: 3px solid var(--naranja);
-  outline-offset: 0;
-}
-
-.marcas {
+.regiones {
   grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
@@ -270,17 +283,19 @@ a.boton {
   border: 0;
 }
 
-.marcas legend {
+.regiones legend {
   width: 100%;
   margin-bottom: 0.35rem;
 }
 
+/* Chips con la forma de los botones Select y Start */
 .chip {
   position: relative;
-  padding: 0.4rem 0.9rem;
+  padding: 0.35rem 0.95rem;
   border-radius: 999px;
-  box-shadow: inset 0 0 0 2px var(--tinta);
-  font-weight: 600;
+  background: var(--carcasa-honda);
+  box-shadow: inset 0 -2px 0 oklch(0.7 0.015 95);
+  font-weight: 700;
   cursor: pointer;
   transition: background-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out);
 }
@@ -296,122 +311,110 @@ a.boton {
 }
 
 .chip:has(input:checked) {
-  background: var(--tinta);
+  background: var(--marco);
   color: var(--blanco);
+  box-shadow: none;
 }
 
 .chip:has(input:focus-visible) {
-  outline: 3px solid var(--naranja);
+  outline: 3px solid var(--boton);
   outline-offset: 2px;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .chip:not(:has(input:checked)):hover {
-    background: var(--cielo-hondo);
+    background: oklch(0.76 0.015 95);
   }
 }
 
-/* ===== Resumen (calculado con reduce) ===== */
 .resumen {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1rem;
   min-height: 1.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.resumen p {
-  margin: 0;
-}
-
-.resumen__texto {
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.resumen__caidas {
-  color: var(--rojo);
-  font-weight: 600;
-}
-
-.resumen .boton {
-  padding: 0.35rem 0.9rem;
-}
-
-/* ===== Grupos por marca ===== */
-.grupo {
-  padding: 1.5rem 0 1.75rem;
-  border-top: 2px solid var(--tinta);
-}
-
-.grupo__marca {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  margin: 0 0 1rem;
-  font-size: 1.5rem;
+  margin: 0 0 0.75rem;
   font-weight: 700;
-  font-stretch: 85%;
-  line-height: 1.1;
-}
-
-.grupo__cuenta {
-  color: var(--tinta-suave);
-  font-size: 1rem;
-  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
-/* ===== Placas de dorsal ===== */
-.placas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
+/* ===== Rejilla de Pokémon ===== */
+.rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.75rem;
 }
 
-.placa {
-  min-width: 3.5rem;
-  padding: 0.5rem 1rem;
+.pokemon {
+  display: grid;
+  justify-items: center;
+  gap: 0.1rem;
+  padding: 0.5rem 0.5rem 0.75rem;
   border: 0;
   border-radius: 10px;
   background: var(--blanco);
   color: var(--tinta);
-  box-shadow: var(--sombra);
+  box-shadow: 0 4px 10px -6px oklch(0.3 0.03 280 / 0.5);
   font: inherit;
-  font-weight: 700;
-  font-stretch: 85%;
-  font-variant-numeric: tabular-nums;
   cursor: pointer;
-  transition: transform 160ms var(--ease-out), background-color 160ms ease;
+  transition: transform 160ms var(--ease-out), box-shadow 160ms ease;
 }
 
-/* Entrada escalonada, solo cuando llegan datos nuevos (no al filtrar) */
-.animar .placa {
-  animation: entrar 360ms var(--ease-out) backwards;
-  animation-delay: calc(min(var(--orden, 0), 12) * 30ms);
-}
-
-.placa:active {
+.pokemon:active {
   transform: scale(0.97);
 }
 
-/* La placa del coche que está en la vitrina */
-.placa[aria-pressed="true"] {
-  background: var(--tinta);
-  color: var(--blanco);
+.pokemon__sprite {
+  width: 96px;
+  height: 96px;
+  border-radius: 6px;
+  background: var(--lcd-0);
+  image-rendering: pixelated;
+  filter: var(--verde-gb);
+  transition: filter 200ms ease;
+}
+
+.pokemon__sprite--roto {
+  visibility: hidden;
+}
+
+.pokemon__numero {
+  color: var(--tinta-suave);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pokemon__nombre {
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: break-word;
+}
+
+/* El Pokémon que está en la pantalla */
+.pokemon[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 3px var(--marco);
+}
+
+.pokemon[aria-pressed="true"] .pokemon__sprite {
+  filter: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .placa:not([aria-pressed="true"]):hover {
-    background: var(--naranja);
+  .pokemon:hover .pokemon__sprite {
+    filter: none;
+  }
+
+  .pokemon:hover {
+    box-shadow: 0 8px 16px -8px oklch(0.3 0.03 280 / 0.6);
   }
 }
 
-.placa--fantasma {
-  width: 6rem;
-  height: 2.6rem;
-  background: var(--cielo-hondo);
+/* Entrada escalonada, solo cuando llega una región nueva */
+.animar .pokemon {
+  animation: entrar 320ms var(--ease-out) backwards;
+  animation-delay: calc(min(var(--orden, 0), 12) * 30ms);
+}
+
+.pokemon--fantasma {
+  height: 9.5rem;
+  background: var(--carcasa-honda);
   box-shadow: none;
   animation: respirar 1s ease-in-out infinite alternate;
 }
@@ -419,54 +422,45 @@ a.boton {
 /* ===== Avisos y botones ===== */
 .aviso__titulo {
   margin: 0;
-  color: var(--rojo);
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
-  font-weight: 800;
-  font-style: italic;
-  font-stretch: 75%;
-  text-transform: uppercase;
+  color: var(--boton);
+  font-family: var(--pixel);
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 700;
 }
 
 .aviso {
   max-width: 60ch;
-  margin: 0.4rem 0 1.1rem;
+  margin: 0.3rem 0 1rem;
   color: var(--tinta-suave);
 }
 
+/* Botón con el magenta de los botones A y B */
 .boton {
-  padding: 0.75rem 1.4rem;
+  padding: 0.65rem 1.3rem;
   border: 0;
-  border-radius: 10px;
-  background: var(--tinta);
+  border-radius: 999px;
+  background: var(--boton);
   color: var(--blanco);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 160ms var(--ease-out), background-color 160ms ease, color 160ms ease;
+  transition: transform 160ms var(--ease-out), background-color 160ms ease;
 }
 
 .boton:active {
   transform: scale(0.97);
 }
 
-.boton--borde {
-  background: transparent;
-  color: var(--tinta);
-  box-shadow: inset 0 0 0 2px var(--tinta);
-}
-
 @media (hover: hover) and (pointer: fine) {
-  .boton--borde:hover {
-    background: var(--tinta);
-    color: var(--blanco);
+  .boton:hover {
+    background: oklch(0.42 0.16 355);
   }
 }
 
 /* ===== Pie ===== */
 .pie {
   padding: 1.5rem 1rem 2rem;
-  background: var(--tinta);
-  color: var(--cielo);
+  color: var(--tinta-suave);
   font-size: 0.9375rem;
   text-align: center;
 }
@@ -475,24 +469,35 @@ a.boton {
   margin: 0;
 }
 
-.pie a {
-  color: var(--blanco);
-}
-
 /* ===== Móvil ===== */
-@media (max-width: 48rem) {
-  .vitrina {
+@media (max-width: 56rem) {
+  .consola {
     grid-template-columns: 1fr;
   }
 
-  .vitrina__foto {
-    order: -1; /* en móvil, primero la foto */
+  .pantalla {
+    position: static;
+    min-height: 0;
   }
 }
 
 @media (max-width: 36rem) {
   .mandos {
     grid-template-columns: 1fr;
+  }
+
+  .pantalla {
+    border-width: 12px;
+    padding: 1.1rem;
+  }
+
+  .rejilla {
+    grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+    gap: 0.5rem;
+  }
+
+  .pokemon__nombre {
+    font-size: 0.875rem;
   }
 }
 
@@ -506,7 +511,19 @@ a.boton {
 
 @keyframes respirar {
   to {
-    background: var(--blanco);
+    background: var(--carcasa);
+  }
+}
+
+@keyframes parpadeo {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
   }
 }
 
@@ -517,18 +534,15 @@ a.boton {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animar .placa {
+  .animar .pokemon {
     animation-name: aparecer;
   }
 
-  .vitrina__foto img {
-    filter: none;
-    transform: none;
+  .pantalla__sprite {
+    transition: none;
   }
-}
 
-@keyframes aparecer {
-  from {
-    opacity: 0;
+  .pantalla__parpadeo {
+    animation: none;
   }
 }

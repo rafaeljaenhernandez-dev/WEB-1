@@ -1,71 +1,73 @@
 // ===== Módulo lógica: transforma los datos, sin tocar el DOM ni la red =====
-const RUIDO = /trailer|automotive/i; // filas de la API que no son coches
+const SPRITES = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon";
 
-// "SENNA GTR" → "Senna GTR": las palabras largas solo en mayúsculas pasan a nombre propio
-export function nombreBonito(nombre) {
+const TIPOS = {
+  normal: "Normal", fire: "Fuego", water: "Agua", grass: "Planta", electric: "Eléctrico", ice: "Hielo",
+  fighting: "Lucha", poison: "Veneno", ground: "Tierra", flying: "Volador", psychic: "Psíquico", bug: "Bicho",
+  rock: "Roca", ghost: "Fantasma", dragon: "Dragón", dark: "Siniestro", steel: "Acero", fairy: "Hada",
+};
+
+const STATS = {
+  hp: "PS", attack: "Ataque", defense: "Defensa",
+  "special-attack": "At. esp.", "special-defense": "Def. esp.", speed: "Velocidad",
+};
+
+export const numero = (id) => `#${String(id).padStart(3, "0")}`;
+
+// "mr-mime" → "Mr Mime"
+function capitalizar(nombre) {
   return nombre
-    .trim()
-    .split(/\s+/)
-    .map((palabra) => (/^[A-Z]{4,}$/.test(palabra) ? palabra[0] + palabra.slice(1).toLowerCase() : palabra))
+    .split("-")
+    .map((parte) => parte.charAt(0).toUpperCase() + parte.slice(1))
     .join(" ");
 }
 
-function esModeloValido(fila) {
-  return typeof fila?.Model_Name === "string" && fila.Model_Name.trim() !== "" && !RUIDO.test(fila.Model_Name);
+// La lista solo trae nombre y URL: el número sale del final de la URL (".../pokemon/25/")
+function idDesdeUrl(url) {
+  return Number(url.split("/").filter(Boolean).at(-1));
 }
 
-function aModelo(marca, fila) {
-  const nombre = nombreBonito(fila.Model_Name);
-  return { id: `${marca}-${nombre}`.toLowerCase(), marca, nombre };
+export function limpiarLista(resultados) {
+  return resultados
+    .filter((r) => typeof r?.name === "string" && typeof r?.url === "string")
+    .map((r) => ({ id: idDesdeUrl(r.url), nombre: capitalizar(r.name) }))
+    .filter((pokemon) => Number.isInteger(pokemon.id) && pokemon.id > 0)
+    .map((pokemon) => ({ ...pokemon, sprite: `${SPRITES}/${pokemon.id}.png` }));
 }
 
-// Une las respuestas de Promise.allSettled en una lista limpia y sin repetidos
-export function unirRespuestas(marcas, respuestas) {
-  const modelos = respuestas.flatMap((respuesta, i) =>
-    respuesta.status === "fulfilled" ? respuesta.value.filter(esModeloValido).map((fila) => aModelo(marcas[i], fila)) : [],
-  );
-  return {
-    modelos: modelos.filter((modelo, i) => modelos.findIndex((otro) => otro.id === modelo.id) === i),
-    caidas: marcas.filter((_, i) => respuestas[i].status === "rejected"),
-  };
-}
-
-export function filtrar(modelos, { texto = "", marca = "todas" }) {
-  const buscado = texto.trim().toLowerCase();
-  return modelos.filter(
-    (modelo) => (marca === "todas" || modelo.marca === marca) && modelo.nombre.toLowerCase().includes(buscado),
+// Busca por nombre ("pika") o por número ("25", "#025")
+export function filtrar(pokemons, texto = "") {
+  const buscado = texto.trim().toLowerCase().replace("#", "");
+  return pokemons.filter(
+    (pokemon) => pokemon.nombre.toLowerCase().includes(buscado) || String(pokemon.id) === buscado.replace(/^0+/, ""),
   );
 }
 
-// toSorted no muta el array original; numeric: true pone "F8" antes que "F12"
-export function ordenar(modelos, orden) {
-  const porNombre = (a, b) => a.nombre.localeCompare(b.nombre, "es", { numeric: true });
-  return modelos.toSorted((a, b) => (orden === "za" ? porNombre(b, a) : porNombre(a, b)));
+// toSorted no muta el array original
+export function ordenar(pokemons, orden) {
+  if (orden === "numero") return pokemons.toSorted((a, b) => a.id - b.id);
+  const porNombre = (a, b) => a.nombre.localeCompare(b.nombre, "es");
+  return pokemons.toSorted((a, b) => (orden === "za" ? porNombre(b, a) : porNombre(a, b)));
 }
 
-// Ordena por marca (toSorted es estable: respeta el orden de los modelos) y agrupa
-export function agruparPorMarca(modelos) {
-  const porMarca = modelos.toSorted((a, b) => a.marca.localeCompare(b.marca, "es"));
-  return Object.groupBy(porMarca, (modelo) => modelo.marca);
-}
-
-// Se queda solo con lo que la vitrina necesita. null o una desambiguación = sin ficha
-export function aFicha(datos) {
-  if (datos?.type !== "standard") {
-    return { texto: "Wikipedia todavía no tiene una ficha de este modelo.", foto: null, enlace: null };
-  }
-  const { thumbnail, originalimage } = datos;
+// Junta las dos respuestas en una ficha limpia, con valores por defecto si falta algo
+export function aFicha({ pokemon, especie }) {
+  const stats = (pokemon.stats ?? []).map((s) => ({
+    nombre: STATS[s.stat?.name] ?? s.stat?.name ?? "?",
+    valor: Number.isFinite(s.base_stat) ? s.base_stat : 0,
+  }));
+  const descripcion = especie.flavor_text_entries?.at(-1)?.flavor_text;
   return {
-    texto: datos.extract?.trim() || "Wikipedia tiene su artículo, pero sin resumen.",
-    // La miniatura viene a 330 px: se pide a 960 px, o la original si es más pequeña
-    foto: originalimage?.width <= 960 ? originalimage.source : (thumbnail?.source.replace(/\/\d+px-/, "/960px-") ?? null),
-    enlace: datos.content_urls?.desktop?.page ?? null,
+    id: pokemon.id,
+    nombre: especie.names?.[0]?.name ?? capitalizar(pokemon.name ?? "Desconocido"),
+    categoria: especie.genera?.[0]?.genus ?? "Pokémon",
+    descripcion: descripcion?.replace(/\s+/g, " ") ?? "La Pokédex aún no tiene una descripción en español.",
+    tipos: (pokemon.types ?? []).map((t) => TIPOS[t.type?.name] ?? t.type?.name ?? "?"),
+    altura: Number.isFinite(pokemon.height) ? `${pokemon.height / 10} m` : "?",
+    peso: Number.isFinite(pokemon.weight) ? `${pokemon.weight / 10} kg` : "?",
+    stats,
+    total: stats.reduce((suma, s) => suma + s.valor, 0),
+    mejor: stats.reduce((mejor, s) => (s.valor > mejor.valor ? s : mejor), { nombre: "—", valor: 0 }),
+    sprite: pokemon.sprites?.front_default ?? `${SPRITES}/${pokemon.id}.png`,
   };
-}
-
-// Cuenta los modelos de cada marca con reduce y saca la que tiene más
-export function resumir(modelos) {
-  const porMarca = modelos.reduce((cuenta, { marca }) => ({ ...cuenta, [marca]: (cuenta[marca] ?? 0) + 1 }), {});
-  const [lider, maximo] = Object.entries(porMarca).reduce((mejor, par) => (par[1] > mejor[1] ? par : mejor), ["", 0]);
-  return { total: modelos.length, marcas: Object.keys(porMarca).length, lider, maximo };
 }

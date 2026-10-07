@@ -1,12 +1,10 @@
 // ===== Módulo render: solo toca el DOM, no sabe nada de la red =====
-const garaje = document.querySelector("#garaje");
+import { numero } from "./logica.js";
+
+const lista = document.querySelector("#lista");
 const resumen = document.querySelector("#resumen");
-const filtroMarcas = document.querySelector("#marcas");
-const vitrina = document.querySelector("#vitrina");
-const fichaModelo = vitrina.querySelector(".vitrina__modelo");
-const fichaTexto = vitrina.querySelector(".vitrina__resumen");
-const fichaAcciones = vitrina.querySelector(".vitrina__acciones");
-const fichaFoto = vitrina.querySelector(".vitrina__foto");
+const regiones = document.querySelector("#regiones");
+const ficha = document.querySelector("#ficha");
 
 function crear(etiqueta, clase, texto) {
   const nodo = document.createElement(etiqueta);
@@ -16,7 +14,7 @@ function crear(etiqueta, clase, texto) {
 }
 
 function crearBoton(texto, accion) {
-  const boton = crear("button", "boton boton--borde", texto);
+  const boton = crear("button", "boton", texto);
   boton.type = "button";
   boton.dataset.accion = accion;
   return boton;
@@ -29,135 +27,133 @@ function pintar(zona, tipo, ...nodos) {
   zona.replaceChildren(...nodos);
 }
 
-// Un chip (radio) por marca, más «Todas», que va marcado al principio
-export function pintarMarcas(marcas) {
-  const chips = ["Todas", ...marcas].map((marca) => {
+// ----- Mandos -----
+export function pintarRegiones(lista) {
+  const chips = lista.map((region, i) => {
     const radio = crear("input");
     radio.type = "radio";
-    radio.name = "marca";
-    radio.value = marca === "Todas" ? "todas" : marca;
-    radio.checked = marca === "Todas";
+    radio.name = "region";
+    radio.value = i;
+    radio.checked = i === 0;
     const chip = crear("label", "chip");
-    chip.append(radio, crear("span", null, marca));
+    chip.append(radio, crear("span", null, region.nombre));
     return chip;
   });
-  filtroMarcas.append(...chips);
+  regiones.append(...chips);
 }
 
-export function pintarResumen({ total, marcas, lider, maximo }, caidas) {
-  const modelos = `${total} ${total === 1 ? "modelo" : "modelos"}`;
-  let texto = `${modelos} de ${marcas} marcas · ${lider} manda con ${maximo}.`;
-  if (total === 0) texto = "Ningún modelo a la vista.";
-  else if (marcas === 1) texto = `${modelos} de ${lider}.`;
-  const partes = [crear("p", "resumen__texto", texto)];
-  if (caidas.length > 0) {
-    partes.push(crear("p", "resumen__caidas", `Sin respuesta: ${caidas.join(", ")}.`), crearBoton("Reintentar", "reintentar-garaje"));
-  }
-  resumen.replaceChildren(...partes);
+export function pintarResumen(visibles, total, region) {
+  if (total === 0) resumen.textContent = "";
+  else if (visibles === total) resumen.textContent = `${total} Pokémon en ${region}.`;
+  else resumen.textContent = `${visibles} de ${total} Pokémon de ${region}.`;
 }
 
-export function pintarGarajeCargando(numeroMarcas) {
-  resumen.replaceChildren();
-  const placas = crear("div", "placas");
-  placas.append(...Array.from({ length: 18 }, () => crear("span", "placa placa--fantasma")));
-  pintar(garaje, "cargando", crear("p", "aviso", `Arrancando motores: preguntando a ${numeroMarcas} marcas a la vez…`), placas);
+// ----- Lista de la región -----
+export function pintarListaCargando(region) {
+  resumen.textContent = "";
+  const huecos = Array.from({ length: 24 }, () => crear("span", "pokemon pokemon--fantasma"));
+  const rejilla = crear("div", "rejilla");
+  rejilla.append(...huecos);
+  pintar(lista, "cargando", crear("p", "aviso", `Conectando con ${region}…`), rejilla);
 }
 
-export function pintarGarajeError(mensaje) {
-  resumen.replaceChildren();
+export function pintarListaError(mensaje) {
+  resumen.textContent = "";
   pintar(
-    garaje,
+    lista,
     "error",
-    crear("p", "aviso__titulo", "Motor calado"),
+    crear("p", "aviso__titulo", "Error de conexión"),
     crear("p", "aviso", mensaje),
-    crearBoton("Volver a arrancar", "reintentar-garaje"),
+    crearBoton("Volver a intentarlo", "reintentar-lista"),
   );
 }
 
-function crearPlaca(modelo, posicion, elegidoId) {
-  const placa = crear("button", "placa", modelo.nombre);
-  placa.type = "button";
-  placa.dataset.id = modelo.id;
-  placa.setAttribute("aria-pressed", modelo.id === elegidoId);
-  placa.style.setProperty("--orden", posicion);
-  return placa;
+export function pintarListaVacia(texto, region) {
+  const mensaje = texto.trim()
+    ? `Ningún Pokémon de ${region} coincide con «${texto.trim()}».`
+    : `${region} ha llegado sin Pokémon. Prueba con otra región.`;
+  pintar(lista, "vacio", crear("p", "aviso__titulo", "Hierba alta vacía"), crear("p", "aviso", mensaje));
+}
+
+function crearPokemon(pokemon, posicion, elegidoId) {
+  const sprite = crear("img", "pokemon__sprite");
+  sprite.src = pokemon.sprite;
+  sprite.alt = "";
+  sprite.width = 96;
+  sprite.height = 96;
+  sprite.loading = "lazy";
+  sprite.addEventListener("error", () => sprite.classList.add("pokemon__sprite--roto"), { once: true });
+
+  const boton = crear("button", "pokemon");
+  boton.type = "button";
+  boton.dataset.id = pokemon.id;
+  boton.setAttribute("aria-pressed", pokemon.id === elegidoId);
+  boton.style.setProperty("--orden", posicion);
+  boton.append(sprite, crear("span", "pokemon__numero", numero(pokemon.id)), crear("span", "pokemon__nombre", pokemon.nombre));
+  return boton;
+}
+
+// animar solo cuando llega una región nueva: al teclear en el buscador no se anima
+export function pintarLista(pokemons, animar, elegidoId) {
+  lista.classList.toggle("animar", animar);
+  const rejilla = crear("div", "rejilla");
+  rejilla.append(...pokemons.map((pokemon, i) => crearPokemon(pokemon, i, elegidoId)));
+  pintar(lista, "datos", rejilla);
 }
 
 export function marcarElegido(id) {
-  garaje.querySelectorAll(".placa[data-id]").forEach((placa) => placa.setAttribute("aria-pressed", placa.dataset.id === id));
+  lista.querySelectorAll(".pokemon[data-id]").forEach((boton) => boton.setAttribute("aria-pressed", Number(boton.dataset.id) === id));
 }
 
-export function pintarGarajeVacio(texto) {
-  const buscado = texto.trim() ? ` con «${texto.trim()}»` : "";
+// ----- Ficha (la pantalla de la Game Boy) -----
+export function pintarFichaCargando(nombre) {
+  pintar(ficha, "cargando", crear("p", "pantalla__nombre", nombre), crear("p", "pantalla__parpadeo", "Leyendo datos…"));
+}
+
+export function pintarFichaError(nombre, mensaje) {
   pintar(
-    garaje,
-    "vacio",
-    crear("p", "aviso__titulo", "Box vacío"),
-    crear("p", "aviso", `Ningún deportivo coincide${buscado}. Prueba otro nombre o elige «Todas» las marcas.`),
+    ficha,
+    "error",
+    crear("p", "pantalla__nombre", nombre),
+    crear("p", "pantalla__texto", `No se ha podido leer su ficha. ${mensaje}`),
+    crearBoton("Volver a intentarlo", "reintentar-ficha"),
   );
 }
 
-// animar solo cuando llegan datos nuevos: al teclear en el buscador no se anima
-export function pintarGaraje(grupos, animar, elegidoId) {
-  garaje.classList.toggle("animar", animar);
-  const secciones = Object.entries(grupos).map(([marca, modelos]) => {
-    const titulo = crear("h3", "grupo__marca", marca);
-    titulo.append(crear("span", "grupo__cuenta", modelos.length));
-    const placas = crear("div", "placas");
-    placas.append(...modelos.map((modelo, i) => crearPlaca(modelo, i, elegidoId)));
-    const seccion = crear("section", "grupo");
-    seccion.append(titulo, placas);
-    return seccion;
-  });
-  pintar(garaje, "datos", ...secciones);
+function crearStat({ nombre, valor }) {
+  const barra = crear("span", "stat__barra");
+  barra.style.setProperty("--valor", Math.min(valor, 255)); // 255 es el máximo posible
+  const fila = crear("li", "stat");
+  fila.append(crear("span", "stat__nombre", nombre), crear("span", "stat__valor", valor), barra);
+  return fila;
 }
 
-// ----- Vitrina: la ficha del coche elegido -----
-function pintarVitrina(tipo, modelo, texto, ...acciones) {
-  vitrina.dataset.tipo = tipo;
-  vitrina.setAttribute("aria-busy", tipo === "cargando");
-  fichaModelo.replaceChildren(crear("span", "vitrina__marca", modelo.marca), modelo.nombre);
-  fichaTexto.textContent = texto;
-  fichaAcciones.replaceChildren(...acciones);
+export function pintarFicha(datos) {
+  const titulo = crear("h2", "pantalla__nombre", datos.nombre);
+  titulo.prepend(crear("span", "pantalla__numero", `${numero(datos.id)} `));
+
+  const sprite = crear("img", "pantalla__sprite");
+  sprite.src = datos.sprite;
+  sprite.alt = datos.nombre;
+  sprite.width = 96;
+  sprite.height = 96;
+  sprite.addEventListener("load", () => sprite.classList.add("lista"), { once: true });
+  sprite.addEventListener("error", () => sprite.replaceWith(crear("p", "pantalla__sinsprite", "Sin imagen")), { once: true });
+
+  const tipos = crear("ul", "tipos");
+  tipos.append(...datos.tipos.map((tipo) => crear("li", "tipo", tipo)));
+
+  const medidas = crear("p", "pantalla__medidas", `${datos.categoria} · ${datos.altura} · ${datos.peso}`);
+
+  const stats = crear("ul", "stats");
+  stats.append(...datos.stats.map(crearStat));
+
+  const total = crear("p", "pantalla__total", `Total ${datos.total} · Destaca en ${datos.mejor.nombre}`);
+
+  pintar(ficha, "datos", titulo, sprite, tipos, medidas, crear("p", "pantalla__texto", datos.descripcion), stats, total);
 }
 
-function crearSinFoto(texto) {
-  return crear("span", "vitrina__sinfoto", texto);
-}
-
-function crearFoto(src, modelo) {
-  const foto = crear("img");
-  foto.src = src;
-  foto.alt = `${modelo.marca} ${modelo.nombre}`;
-  foto.addEventListener("load", () => foto.classList.add("lista"), { once: true });
-  foto.addEventListener("error", () => foto.replaceWith(crearSinFoto("La foto no ha llegado")), { once: true });
-  return foto;
-}
-
-export function pintarFichaCargando(modelo) {
-  pintarVitrina("cargando", modelo, "Buscando su ficha en Wikipedia…");
-  fichaFoto.replaceChildren();
-}
-
-export function pintarFicha(modelo, ficha) {
-  const acciones = [];
-  if (ficha.enlace) {
-    const enlace = crear("a", "boton", "Leer la ficha completa");
-    enlace.href = ficha.enlace;
-    enlace.target = "_blank";
-    enlace.rel = "noopener";
-    acciones.push(enlace);
-  }
-  pintarVitrina("datos", modelo, ficha.texto, ...acciones);
-  fichaFoto.replaceChildren(ficha.foto ? crearFoto(ficha.foto, modelo) : crearSinFoto("Sin foto en Wikipedia"));
-}
-
-export function pintarFichaError(modelo, mensaje) {
-  pintarVitrina("error", modelo, `No hemos podido traer su ficha. ${mensaje}`, crearBoton("Volver a intentarlo", "reintentar-ficha"));
-  fichaFoto.replaceChildren(crearSinFoto("Sin señal"));
-}
-
-// Si la vitrina se ha quedado arriba, fuera de la pantalla, sube hasta ella
-export function enfocarVitrina() {
-  if (vitrina.getBoundingClientRect().top < 0) vitrina.scrollIntoView({ block: "start" });
+// En móvil la ficha queda arriba: si no se ve, sube hasta ella
+export function enfocarFicha() {
+  if (ficha.getBoundingClientRect().top < 0) ficha.scrollIntoView({ block: "start" });
 }
