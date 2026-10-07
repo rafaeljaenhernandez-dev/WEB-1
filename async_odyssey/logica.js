@@ -14,20 +14,16 @@ const STATS = {
   "special-attack": "At. esp.", "special-defense": "Def. esp.", speed: "Velocidad",
 };
 
-export const numero = (id) => `N.º ${String(id).padStart(4, "0")}`;
+export const numero = (id) => `N.º ${id}`;
 export const nombreTipo = (clave) => TIPOS[clave] ?? clave;
 
-// "mr-mime" → "Mr Mime"
-function capitalizar(nombre) {
-  return nombre
-    .split("-")
-    .map((parte) => parte.charAt(0).toUpperCase() + parte.slice(1))
-    .join(" ");
-}
+// La API da los nombres en minúsculas y con guiones: "mr-mime" → "mr mime"
+// (la mayúscula inicial la pone el CSS con text-transform: capitalize)
+const limpiarNombre = (nombre) => nombre.replaceAll("-", " ");
 
-// La API solo da URLs: el número sale del final (".../pokemon/25/")
+// La API solo da URLs: el número es el penúltimo trozo (".../pokemon/25/" → "25")
 function idDesdeUrl(url) {
-  return Number(String(url).split("/").filter(Boolean).at(-1));
+  return Number(String(url).split("/").at(-2));
 }
 
 // Une las 18 respuestas de /type en { 25: [{ tipo: "electric" }], 1: [{ tipo: "grass" }, { tipo: "poison" }] … }
@@ -38,7 +34,7 @@ export function tiposPorId(respuestas) {
         ? respuesta.value.map((p) => ({ id: idDesdeUrl(p.url), slot: p.slot, tipo: CLAVES_TIPOS[i] }))
         : [],
     )
-    .filter((entrada) => Number.isInteger(entrada.id))
+    .filter((entrada) => entrada.id > 0) // NaN > 0 es false: descarta las URLs raras
     .toSorted((a, b) => a.slot - b.slot); // primero el tipo principal
   return Object.groupBy(entradas, (entrada) => entrada.id);
 }
@@ -46,8 +42,8 @@ export function tiposPorId(respuestas) {
 export function limpiarLista(resultados, tipos) {
   return resultados
     .filter((r) => typeof r?.name === "string" && typeof r?.url === "string")
-    .map((r) => ({ id: idDesdeUrl(r.url), nombre: capitalizar(r.name) }))
-    .filter((pokemon) => Number.isInteger(pokemon.id) && pokemon.id > 0)
+    .map((r) => ({ id: idDesdeUrl(r.url), nombre: limpiarNombre(r.name) }))
+    .filter((pokemon) => pokemon.id > 0) // NaN > 0 es false: descarta las URLs raras
     .map((pokemon) => ({
       ...pokemon,
       arte: `${ARTE}/${pokemon.id}.png`,
@@ -61,15 +57,16 @@ export function filtrar(pokemons, { texto = "", tipo = "todos" }) {
   return pokemons.filter(
     (pokemon) =>
       (tipo === "todos" || pokemon.tipos.includes(tipo)) &&
-      (pokemon.nombre.toLowerCase().includes(buscado) || String(pokemon.id) === buscado.replace(/^0+/, "")),
+      // Number("025") es 25; Number("pika") es NaN y no coincide con ningún número
+      (pokemon.nombre.includes(buscado) || pokemon.id === Number(buscado)),
   );
 }
 
 // toSorted no muta el array original
 export function ordenar(pokemons, orden) {
   if (orden === "numero") return pokemons.toSorted((a, b) => a.id - b.id);
-  const porNombre = (a, b) => a.nombre.localeCompare(b.nombre, "es");
-  return pokemons.toSorted((a, b) => (orden === "za" ? porNombre(b, a) : porNombre(a, b)));
+  if (orden === "za") return pokemons.toSorted((a, b) => (a.nombre < b.nombre ? 1 : -1));
+  return pokemons.toSorted((a, b) => (a.nombre > b.nombre ? 1 : -1));
 }
 
 // Cuenta cuántas veces sale cada tipo con reduce y devuelve el que más
@@ -83,17 +80,18 @@ export function tipoMasComun(pokemons) {
 export function aFicha({ pokemon, especie }) {
   const stats = (pokemon.stats ?? []).map((s) => ({
     nombre: STATS[s.stat?.name] ?? s.stat?.name ?? "?",
-    valor: Number.isFinite(s.base_stat) ? s.base_stat : 0,
+    valor: typeof s.base_stat === "number" ? s.base_stat : 0,
   }));
   const descripcion = especie.flavor_text_entries?.at(-1)?.flavor_text;
   return {
     id: pokemon.id,
-    nombre: especie.names?.[0]?.name ?? capitalizar(pokemon.name ?? "Desconocido"),
+    nombre: especie.names?.[0]?.name ?? limpiarNombre(pokemon.name ?? "desconocido"),
     categoria: especie.genera?.[0]?.genus ?? "Pokémon",
-    descripcion: descripcion?.replace(/\s+/g, " ") ?? "La Pokédex aún no tiene una descripción en español.",
-    tipos: (pokemon.types ?? []).map((t) => t.type?.name).filter(Boolean),
-    altura: Number.isFinite(pokemon.height) ? `${pokemon.height / 10} m` : "?",
-    peso: Number.isFinite(pokemon.weight) ? `${pokemon.weight / 10} kg` : "?",
+    // Los textos de los juegos traen saltos de línea a mitad de frase
+    descripcion: descripcion?.replaceAll("\n", " ").replaceAll("\f", " ") ?? "La Pokédex aún no tiene una descripción en español.",
+    tipos: (pokemon.types ?? []).map((t) => t.type?.name).filter((tipo) => tipo !== undefined),
+    altura: typeof pokemon.height === "number" ? `${pokemon.height / 10} m` : "?",
+    peso: typeof pokemon.weight === "number" ? `${pokemon.weight / 10} kg` : "?",
     stats,
     total: stats.reduce((suma, s) => suma + s.valor, 0),
     mejor: stats.reduce((mejor, s) => (s.valor > mejor.valor ? s : mejor), { nombre: "—", valor: 0 }),

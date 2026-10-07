@@ -230,6 +230,7 @@ a {
 
 .ficha__nombre {
   display: flex;
+  text-transform: capitalize;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0 0.6rem;
@@ -454,6 +455,7 @@ a {
 
 .pokemon__nombre {
   margin-bottom: 0.35rem;
+  text-transform: capitalize;
   font-size: 1.0625rem;
   font-weight: 900;
   line-height: 1.15;

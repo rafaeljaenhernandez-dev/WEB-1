@@ -16,6 +16,9 @@ const REGIONES = [
 ];
 
 const mandos = document.querySelector("#mandos");
+const campoTexto = document.querySelector("#texto");
+const campoTipo = document.querySelector("#tipo");
+const campoOrden = document.querySelector("#orden");
 const estado = {
   region: REGIONES[0],
   pokemons: [],
@@ -44,10 +47,10 @@ async function cargarRegion(region) {
 }
 
 function refrescar(animar = false) {
-  const filtros = Object.fromEntries(new FormData(mandos)); // { region, texto, tipo, orden }
-  const visibles = ordenar(filtrar(estado.pokemons, filtros), filtros.orden);
+  const filtros = { texto: campoTexto.value, tipo: campoTipo.value };
+  const visibles = ordenar(filtrar(estado.pokemons, filtros), campoOrden.value);
   vista.pintarResumen(visibles.length, estado.pokemons.length, estado.region.nombre, tipoMasComun(visibles));
-  if (visibles.length === 0) vista.pintarListaVacia(filtros.texto, estado.region.nombre);
+  if (visibles.length === 0) vista.pintarListaVacia(campoTexto.value, estado.region.nombre);
   else vista.pintarLista(visibles, animar, estado.elegido.id);
 }
 

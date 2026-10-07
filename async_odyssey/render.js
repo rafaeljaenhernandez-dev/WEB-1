@@ -40,8 +40,8 @@ function crearArte(src, alt, clase) {
   imagen.alt = alt;
   imagen.width = 475;
   imagen.height = 475;
-  imagen.addEventListener("load", () => imagen.classList.add("lista"), { once: true });
-  imagen.addEventListener("error", () => imagen.classList.add("rota"), { once: true });
+  imagen.addEventListener("load", () => imagen.classList.add("lista"));
+  imagen.addEventListener("error", () => imagen.classList.add("rota"));
   return imagen;
 }
 
@@ -144,12 +144,12 @@ export function marcarElegido(id) {
 
 // ----- Ficha -----
 export function pintarFichaCargando(nombre) {
-  delete ficha.dataset.tipo;
+  ficha.dataset.tipo = ""; // sin tipo: la ficha vuelve a los colores neutros
   pintar(ficha, "cargando", crear("div", "ficha__foco"), crear("p", "ficha__nombre", nombre), crear("p", "aviso", "Consultando la Pokédex…"));
 }
 
 export function pintarFichaError(nombre, mensaje) {
-  delete ficha.dataset.tipo;
+  ficha.dataset.tipo = ""; // sin tipo: la ficha vuelve a los colores neutros
   pintar(
     ficha,
     "error",
