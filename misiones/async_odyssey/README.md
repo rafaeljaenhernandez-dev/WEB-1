@@ -9,7 +9,7 @@ Es una Pokédex que consume la **[PokeAPI](https://pokeapi.co)**, una API públi
 Necesita Node.js.
 
 ```bash
-cd async_odyssey
+cd misiones/async_odyssey
 npm install
 npm run dev
 ```

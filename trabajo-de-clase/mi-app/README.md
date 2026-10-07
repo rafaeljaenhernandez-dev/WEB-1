@@ -30,7 +30,7 @@ Están en `components/`, pero ahora mismo `App` no los usa.
 ## Cómo arrancarlo
 
 ```bash
-cd mi-app
+cd trabajo-de-clase/mi-app
 npm install
 npm run dev
 ```
