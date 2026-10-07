@@ -1,0 +1,15 @@
+{
+  "name": "async-odyssey",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Async Odyssey: explorador de libros con la API pública de Open Library (fetch + async/await + módulos ES).",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.3.0"
+  }
+}

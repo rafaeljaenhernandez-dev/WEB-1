@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="Async Odyssey: navega por la Biblioteca Abierta y descubre libros de todo el mundo."
+    />
+    <title>Async Odyssey · Navega la Biblioteca Abierta</title>
+    <link rel="icon" href="data:," />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap"
+    />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <header class="cabecera">
+      <h1 class="titulo">Async Odyssey</h1>
+      <p class="lema">
+        Cada búsqueda es una travesía: zarpas, esperas al horizonte y vuelves con libros.
+      </p>
+
+      <form id="buscador" class="buscador" role="search">
+        <label class="buscador__etiqueta" for="consulta">¿Qué rumbo tomamos?</label>
+        <div class="buscador__fila">
+          <input
+            id="consulta"
+            class="buscador__campo"
+            type="search"
+            name="consulta"
+            placeholder="odyssey, dragones, océano…"
+            autocomplete="off"
+            required
+          />
+          <button class="boton" type="submit">Zarpar</button>
+        </div>
+      </form>
+    </header>
+
+    <main class="travesia">
+      <section id="estado" class="estado" aria-live="polite"></section>
+      <ol id="resultados" class="estanteria"></ol>
+    </main>
+
+    <footer class="pie">
+      <p>Datos de la <a href="https://openlibrary.org" rel="noopener">Open Library</a> · fetch + async/await · Vite</p>
+    </footer>
+  </body>
+</html>
