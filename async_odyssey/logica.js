@@ -49,6 +49,20 @@ export function agruparPorMarca(modelos) {
   return Object.groupBy(porMarca, (modelo) => modelo.marca);
 }
 
+// Se queda solo con lo que la vitrina necesita. null o una desambiguación = sin ficha
+export function aFicha(datos) {
+  if (datos?.type !== "standard") {
+    return { texto: "Wikipedia todavía no tiene una ficha de este modelo.", foto: null, enlace: null };
+  }
+  const { thumbnail, originalimage } = datos;
+  return {
+    texto: datos.extract?.trim() || "Wikipedia tiene su artículo, pero sin resumen.",
+    // La miniatura viene a 330 px: se pide a 960 px, o la original si es más pequeña
+    foto: originalimage?.width <= 960 ? originalimage.source : (thumbnail?.source.replace(/\/\d+px-/, "/960px-") ?? null),
+    enlace: datos.content_urls?.desktop?.page ?? null,
+  };
+}
+
 // Cuenta los modelos de cada marca con reduce y saca la que tiene más
 export function resumir(modelos) {
   const porMarca = modelos.reduce((cuenta, { marca }) => ({ ...cuenta, [marca]: (cuenta[marca] ?? 0) + 1 }), {});

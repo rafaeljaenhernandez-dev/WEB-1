@@ -1,5 +1,6 @@
 // ===== Módulo API: lo único que hace peticiones de red =====
 const NHTSA = "https://vpic.nhtsa.dot.gov/api/vehicles";
+const WIKIPEDIA = "https://es.wikipedia.org/api/rest_v1/page/summary";
 
 // Error propio para los fallos HTTP: guarda el código (404, 500…)
 export class ErrorHttp extends Error {
@@ -34,4 +35,15 @@ export async function pedirModelos(marca) {
     `${NHTSA}/GetModelsForMakeYear/make/${encodeURIComponent(marca)}/vehicletype/car?format=json`,
   );
   return Array.isArray(datos?.Results) ? datos.Results : [];
+}
+
+// Un 404 de Wikipedia no es un fallo: significa que ese modelo no tiene artículo
+export async function pedirFicha(marca, modelo) {
+  const titulo = encodeURIComponent(`${marca} ${modelo}`.replaceAll(" ", "_"));
+  try {
+    return await pedirJSON(`${WIKIPEDIA}/${titulo}`);
+  } catch (error) {
+    if (error.codigo === 404) return null;
+    throw error;
+  }
 }

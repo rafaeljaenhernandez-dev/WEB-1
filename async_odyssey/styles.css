@@ -109,6 +109,111 @@ a {
   text-transform: uppercase;
 }
 
+/* ===== Vitrina: la ficha del coche elegido ===== */
+.vitrina {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(2rem, 5vw, 3.5rem);
+  scroll-margin-top: 1rem;
+}
+
+.vitrina__modelo {
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 800;
+  font-style: italic;
+  font-stretch: 68%;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.vitrina__marca {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--tinta-suave);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 600;
+  font-stretch: 85%;
+  letter-spacing: 0;
+}
+
+.vitrina__resumen {
+  display: -webkit-box;
+  max-width: 58ch;
+  margin: 1.25rem 0 1.5rem;
+  color: var(--tinta-suave);
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 7;
+  text-wrap: pretty;
+}
+
+.vitrina[data-tipo="error"] .vitrina__resumen {
+  color: var(--rojo);
+  font-weight: 600;
+}
+
+.vitrina__acciones:empty {
+  display: none;
+}
+
+.vitrina__foto {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 2;
+  margin: 0;
+  border-radius: 18px;
+  background: var(--cielo-hondo);
+  box-shadow: 0 24px 40px -20px oklch(0.24 0.07 258 / 0.55);
+  overflow: hidden;
+}
+
+.vitrina[data-tipo="cargando"] .vitrina__foto {
+  animation: respirar 1s ease-in-out infinite alternate;
+}
+
+/* La foto llega desenfocada y se enfoca, como una cámara al encontrar el coche */
+.vitrina__foto img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  filter: blur(14px);
+  transform: scale(1.04);
+  transition:
+    opacity 400ms var(--ease-out),
+    filter 400ms var(--ease-out),
+    transform 600ms var(--ease-out);
+}
+
+.vitrina__foto img.lista {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+.vitrina__sinfoto {
+  color: var(--tinta-suave);
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-style: italic;
+  font-stretch: 80%;
+  text-transform: uppercase;
+}
+
+a.boton {
+  display: inline-block;
+  text-decoration: none;
+}
+
 /* ===== Mandos: buscador, orden y marcas ===== */
 .mandos {
   display: grid;
@@ -286,8 +391,14 @@ a {
   transform: scale(0.97);
 }
 
+/* La placa del coche que está en la vitrina */
+.placa[aria-pressed="true"] {
+  background: var(--tinta);
+  color: var(--blanco);
+}
+
 @media (hover: hover) and (pointer: fine) {
-  .placa:hover {
+  .placa:not([aria-pressed="true"]):hover {
     background: var(--naranja);
   }
 }
@@ -377,9 +488,20 @@ a {
   }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animar .placa {
     animation-name: aparecer;
+  }
+
+  .vitrina__foto img {
+    filter: none;
+    transform: none;
   }
 }
 

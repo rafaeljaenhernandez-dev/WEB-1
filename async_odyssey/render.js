@@ -2,6 +2,11 @@
 const garaje = document.querySelector("#garaje");
 const resumen = document.querySelector("#resumen");
 const filtroMarcas = document.querySelector("#marcas");
+const vitrina = document.querySelector("#vitrina");
+const fichaModelo = vitrina.querySelector(".vitrina__modelo");
+const fichaTexto = vitrina.querySelector(".vitrina__resumen");
+const fichaAcciones = vitrina.querySelector(".vitrina__acciones");
+const fichaFoto = vitrina.querySelector(".vitrina__foto");
 
 function crear(etiqueta, clase, texto) {
   const nodo = document.createElement(etiqueta);
@@ -69,12 +74,17 @@ export function pintarGarajeError(mensaje) {
   );
 }
 
-function crearPlaca(modelo, posicion) {
+function crearPlaca(modelo, posicion, elegidoId) {
   const placa = crear("button", "placa", modelo.nombre);
   placa.type = "button";
   placa.dataset.id = modelo.id;
+  placa.setAttribute("aria-pressed", modelo.id === elegidoId);
   placa.style.setProperty("--orden", posicion);
   return placa;
+}
+
+export function marcarElegido(id) {
+  garaje.querySelectorAll(".placa[data-id]").forEach((placa) => placa.setAttribute("aria-pressed", placa.dataset.id === id));
 }
 
 export function pintarGarajeVacio(texto) {
@@ -88,16 +98,66 @@ export function pintarGarajeVacio(texto) {
 }
 
 // animar solo cuando llegan datos nuevos: al teclear en el buscador no se anima
-export function pintarGaraje(grupos, animar) {
+export function pintarGaraje(grupos, animar, elegidoId) {
   garaje.classList.toggle("animar", animar);
   const secciones = Object.entries(grupos).map(([marca, modelos]) => {
     const titulo = crear("h3", "grupo__marca", marca);
     titulo.append(crear("span", "grupo__cuenta", modelos.length));
     const placas = crear("div", "placas");
-    placas.append(...modelos.map(crearPlaca));
+    placas.append(...modelos.map((modelo, i) => crearPlaca(modelo, i, elegidoId)));
     const seccion = crear("section", "grupo");
     seccion.append(titulo, placas);
     return seccion;
   });
   pintar(garaje, "datos", ...secciones);
+}
+
+// ----- Vitrina: la ficha del coche elegido -----
+function pintarVitrina(tipo, modelo, texto, ...acciones) {
+  vitrina.dataset.tipo = tipo;
+  vitrina.setAttribute("aria-busy", tipo === "cargando");
+  fichaModelo.replaceChildren(crear("span", "vitrina__marca", modelo.marca), modelo.nombre);
+  fichaTexto.textContent = texto;
+  fichaAcciones.replaceChildren(...acciones);
+}
+
+function crearSinFoto(texto) {
+  return crear("span", "vitrina__sinfoto", texto);
+}
+
+function crearFoto(src, modelo) {
+  const foto = crear("img");
+  foto.src = src;
+  foto.alt = `${modelo.marca} ${modelo.nombre}`;
+  foto.addEventListener("load", () => foto.classList.add("lista"), { once: true });
+  foto.addEventListener("error", () => foto.replaceWith(crearSinFoto("La foto no ha llegado")), { once: true });
+  return foto;
+}
+
+export function pintarFichaCargando(modelo) {
+  pintarVitrina("cargando", modelo, "Buscando su ficha en Wikipedia…");
+  fichaFoto.replaceChildren();
+}
+
+export function pintarFicha(modelo, ficha) {
+  const acciones = [];
+  if (ficha.enlace) {
+    const enlace = crear("a", "boton", "Leer la ficha completa");
+    enlace.href = ficha.enlace;
+    enlace.target = "_blank";
+    enlace.rel = "noopener";
+    acciones.push(enlace);
+  }
+  pintarVitrina("datos", modelo, ficha.texto, ...acciones);
+  fichaFoto.replaceChildren(ficha.foto ? crearFoto(ficha.foto, modelo) : crearSinFoto("Sin foto en Wikipedia"));
+}
+
+export function pintarFichaError(modelo, mensaje) {
+  pintarVitrina("error", modelo, `No hemos podido traer su ficha. ${mensaje}`, crearBoton("Volver a intentarlo", "reintentar-ficha"));
+  fichaFoto.replaceChildren(crearSinFoto("Sin señal"));
+}
+
+// Si la vitrina se ha quedado arriba, fuera de la pantalla, sube hasta ella
+export function enfocarVitrina() {
+  if (vitrina.getBoundingClientRect().top < 0) vitrina.scrollIntoView({ block: "start" });
 }
