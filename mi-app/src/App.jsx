@@ -1,11 +1,12 @@
-import Boton from "./components/button.jsx";
-import Saludo from "./components/saludo.jsx";
+import FichaTripulante from "./components/fichaTripulante.jsx";
 
 export default function App() {
   return (
   <>
-    <Boton />
-    <Saludo nombre="Rafa" apellido="Jaen" />
+    <FichaTripulante nombre="Ripley" rol="Capitana" />
+    <FichaTripulante nombre="Spock" rol="Oficial científico" especie="vulcana" />
+    <FichaTripulante nombre="Chewbacca" rol="Copiloto" especie="wookiee" />
+    <FichaTripulante nombre="Scotty" rol="Ingeniero jefe" />
   </>
   )
 }
