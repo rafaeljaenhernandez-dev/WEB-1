@@ -3,53 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="light" />
     <meta
       name="description"
-      content="Async Odyssey: navega por la Biblioteca Abierta y descubre libros de todo el mundo."
+      content="Async Odyssey: el garaje de los deportivos, con datos reales de la NHTSA y fichas de Wikipedia."
     />
-    <title>Async Odyssey · Navega la Biblioteca Abierta</title>
+    <title>Async Odyssey · El garaje de los deportivos</title>
     <link rel="icon" href="data:," />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,50..125,100..900;1,50..125,100..900&display=swap"
     />
     <link rel="stylesheet" href="/styles.css" />
-    <script type="module" src="/app.js"></script>
+    <script type="module" src="/main.js"></script>
   </head>
   <body>
     <header class="cabecera">
       <h1 class="titulo">Async Odyssey</h1>
-      <p class="lema">
-        Cada búsqueda es una travesía: zarpas, esperas al horizonte y vuelves con libros.
-      </p>
-
-      <form id="buscador" class="buscador" role="search">
-        <label class="buscador__etiqueta" for="consulta">¿Qué rumbo tomamos?</label>
-        <div class="buscador__fila">
-          <input
-            id="consulta"
-            class="buscador__campo"
-            type="search"
-            name="consulta"
-            placeholder="odyssey, dragones, océano…"
-            autocomplete="off"
-            required
-          />
-          <button class="boton" type="submit">Zarpar</button>
-        </div>
-      </form>
+      <p class="lema">El garaje de los deportivos: diez marcas, una petición por marca y todas a la vez.</p>
     </header>
 
-    <main class="travesia">
-      <section id="estado" class="estado" aria-live="polite"></section>
-      <ol id="resultados" class="estanteria"></ol>
+    <main class="pista">
+      <section class="garaje" aria-labelledby="titulo-garaje">
+        <h2 id="titulo-garaje" class="garaje__titulo">El garaje</h2>
+        <div id="garaje" class="garaje__lista" aria-live="polite"></div>
+      </section>
     </main>
 
     <footer class="pie">
-      <p>Datos de la <a href="https://openlibrary.org" rel="noopener">Open Library</a> · fetch + async/await · Vite</p>
+      <p>
+        Modelos: <a href="https://vpic.nhtsa.dot.gov/api/" rel="noopener">NHTSA vPIC</a> · Fichas y fotos:
+        <a href="https://es.wikipedia.org" rel="noopener">Wikipedia</a> · fetch + async/await · Vite
+      </p>
     </footer>
   </body>
 </html>
