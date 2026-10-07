@@ -1,0 +1,21 @@
+.tripulacion {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 80px) 20px;
+}
+
+.tripulacion h1 {
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 0 0 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--linea);
+}
+
+/* Cuadrícula: tantas columnas de 240px como quepan */
+.fichas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+  gap: 20px;
+}

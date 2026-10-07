@@ -1,0 +1,32 @@
+.ficha {
+  padding: 28px 24px 12px;
+  background: var(--panel);
+  /* Recorta la esquina de arriba a la derecha, como un panel de nave */
+  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%);
+}
+
+.ficha h2 {
+  font-size: 1.6rem;
+  line-height: 1.1;
+  margin: 0 0 20px;
+}
+
+/* Cada línea de texto es una fila: etiqueta a la izquierda, dato a la derecha */
+.ficha p {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--linea);
+  color: var(--texto-fuerte);
+}
+
+.ficha .etiqueta {
+  font-family: var(--fuente-titulos);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--acento);
+}

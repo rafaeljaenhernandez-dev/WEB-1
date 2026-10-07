@@ -1,0 +1,52 @@
+/* Colores de toda la app (modo claro) */
+:root {
+  --fondo: #eeebe4;
+  --panel: #ffffff;
+  --linea: #d9d4c9;
+  --texto: #4a5260;
+  --texto-fuerte: #14171c;
+  --acento: #a35200;
+
+  --fuente-titulos: "Chakra Petch", system-ui, sans-serif;
+  --fuente-texto: system-ui, "Segoe UI", Roboto, sans-serif;
+
+  color-scheme: light dark;
+  font: 17px/1.5 var(--fuente-texto);
+  color: var(--texto);
+  background: var(--fondo);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Los mismos colores en modo oscuro */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: #0b0f17;
+    --panel: #151b26;
+    --linea: #263042;
+    --texto: #a9b4c4;
+    --texto-fuerte: #eef2f7;
+    --acento: #f5b544;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+}
+
+h1,
+h2 {
+  font-family: var(--fuente-titulos);
+  font-weight: 600;
+  color: var(--texto-fuerte);
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+}
+
+::selection {
+  background: var(--acento);
+  color: var(--panel);
+}
