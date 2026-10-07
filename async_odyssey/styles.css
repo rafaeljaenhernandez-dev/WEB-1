@@ -34,6 +34,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+html {
+  accent-color: var(--naranja);
+  scrollbar-color: var(--tinta) var(--cielo-hondo);
+}
+
 ::selection {
   background: var(--naranja);
   color: var(--tinta);
@@ -472,6 +477,23 @@ a.boton {
 
 .pie a {
   color: var(--blanco);
+}
+
+/* ===== Móvil ===== */
+@media (max-width: 48rem) {
+  .vitrina {
+    grid-template-columns: 1fr;
+  }
+
+  .vitrina__foto {
+    order: -1; /* en móvil, primero la foto */
+  }
+}
+
+@media (max-width: 36rem) {
+  .mandos {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ===== Animaciones ===== */
