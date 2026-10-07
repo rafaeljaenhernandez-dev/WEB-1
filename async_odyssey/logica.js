@@ -30,6 +30,28 @@ export function unirRespuestas(marcas, respuestas) {
   };
 }
 
+export function filtrar(modelos, { texto = "", marca = "todas" }) {
+  const buscado = texto.trim().toLowerCase();
+  return modelos.filter(
+    (modelo) => (marca === "todas" || modelo.marca === marca) && modelo.nombre.toLowerCase().includes(buscado),
+  );
+}
+
+// toSorted no muta el array original; numeric: true pone "F8" antes que "F12"
+export function ordenar(modelos, orden) {
+  const porNombre = (a, b) => a.nombre.localeCompare(b.nombre, "es", { numeric: true });
+  return modelos.toSorted((a, b) => (orden === "za" ? porNombre(b, a) : porNombre(a, b)));
+}
+
+// Ordena por marca (toSorted es estable: respeta el orden de los modelos) y agrupa
 export function agruparPorMarca(modelos) {
-  return Object.groupBy(modelos, (modelo) => modelo.marca);
+  const porMarca = modelos.toSorted((a, b) => a.marca.localeCompare(b.marca, "es"));
+  return Object.groupBy(porMarca, (modelo) => modelo.marca);
+}
+
+// Cuenta los modelos de cada marca con reduce y saca la que tiene más
+export function resumir(modelos) {
+  const porMarca = modelos.reduce((cuenta, { marca }) => ({ ...cuenta, [marca]: (cuenta[marca] ?? 0) + 1 }), {});
+  const [lider, maximo] = Object.entries(porMarca).reduce((mejor, par) => (par[1] > mejor[1] ? par : mejor), ["", 0]);
+  return { total: modelos.length, marcas: Object.keys(porMarca).length, lider, maximo };
 }

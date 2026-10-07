@@ -109,6 +109,126 @@ a {
   text-transform: uppercase;
 }
 
+/* ===== Mandos: buscador, orden y marcas ===== */
+.mandos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.campo {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.campo__nombre {
+  padding: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--tinta);
+  border-radius: 10px;
+  background: var(--blanco);
+  color: var(--tinta);
+  font: inherit;
+  caret-color: var(--naranja);
+}
+
+.campo input::placeholder {
+  color: oklch(0.5 0.05 250);
+}
+
+.campo input:focus-visible,
+.campo select:focus-visible {
+  outline: 3px solid var(--naranja);
+  outline-offset: 0;
+}
+
+.marcas {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.marcas legend {
+  width: 100%;
+  margin-bottom: 0.35rem;
+}
+
+.chip {
+  position: relative;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 2px var(--tinta);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out);
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.chip:has(input:checked) {
+  background: var(--tinta);
+  color: var(--blanco);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 3px solid var(--naranja);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .chip:not(:has(input:checked)):hover {
+    background: var(--cielo-hondo);
+  }
+}
+
+/* ===== Resumen (calculado con reduce) ===== */
+.resumen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  min-height: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.resumen p {
+  margin: 0;
+}
+
+.resumen__texto {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.resumen__caidas {
+  color: var(--rojo);
+  font-weight: 600;
+}
+
+.resumen .boton {
+  padding: 0.35rem 0.9rem;
+}
+
 /* ===== Grupos por marca ===== */
 .grupo {
   padding: 1.5rem 0 1.75rem;
@@ -153,9 +273,13 @@ a {
   font-stretch: 85%;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color 160ms ease;
+}
+
+/* Entrada escalonada, solo cuando llegan datos nuevos (no al filtrar) */
+.animar .placa {
   animation: entrar 360ms var(--ease-out) backwards;
   animation-delay: calc(min(var(--orden, 0), 12) * 30ms);
-  transition: transform 160ms var(--ease-out), background-color 160ms ease;
 }
 
 .placa:active {
@@ -254,7 +378,7 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .placa {
+  .animar .placa {
     animation-name: aparecer;
   }
 }

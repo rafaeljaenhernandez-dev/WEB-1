@@ -28,6 +28,25 @@
     <main class="pista">
       <section class="garaje" aria-labelledby="titulo-garaje">
         <h2 id="titulo-garaje" class="garaje__titulo">El garaje</h2>
+
+        <form id="mandos" class="mandos" role="search">
+          <label class="campo campo--texto">
+            <span class="campo__nombre">Busca un modelo</span>
+            <input type="search" name="texto" placeholder="P1, Huracan, 911…" autocomplete="off" />
+          </label>
+          <label class="campo">
+            <span class="campo__nombre">Orden</span>
+            <select name="orden">
+              <option value="az">De la A a la Z</option>
+              <option value="za">De la Z a la A</option>
+            </select>
+          </label>
+          <fieldset id="marcas" class="marcas">
+            <legend class="campo__nombre">Marca</legend>
+          </fieldset>
+        </form>
+
+        <div id="resumen" class="resumen" aria-live="polite"></div>
         <div id="garaje" class="garaje__lista" aria-live="polite"></div>
       </section>
     </main>
