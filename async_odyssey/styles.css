@@ -141,6 +141,44 @@ a {
   padding-bottom: 4rem;
 }
 
+/* ===== Estados: cargando, error, vacío ===== */
+.estado:empty {
+  display: none;
+}
+
+.estado {
+  padding: 2rem 0;
+}
+
+.estado__titulo {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.estado__texto {
+  max-width: 52ch;
+  margin: 0.5rem 0 1.25rem;
+  color: var(--espuma-suave);
+}
+
+.estado[data-tipo="error"] .estado__titulo {
+  color: var(--coral);
+}
+
+.boton--secundario {
+  background: transparent;
+  color: var(--espuma);
+  box-shadow: inset 0 0 0 2px var(--mar-700);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .boton--secundario:hover {
+    background: var(--mar-800);
+  }
+}
+
 /* ===== Pie ===== */
 .pie {
   padding: 1.5rem 1rem 2rem;
