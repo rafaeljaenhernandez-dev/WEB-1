@@ -191,8 +191,3 @@ export function pintarFicha(datos) {
     crear("p", "ficha__total", `Total ${datos.total} · Destaca en ${datos.mejor.nombre}`),
   );
 }
-
-// En móvil la ficha queda arriba: si no se ve, sube hasta ella
-export function enfocarFicha() {
-  if (ficha.getBoundingClientRect().top < 0) ficha.scrollIntoView({ block: "start" });
-}

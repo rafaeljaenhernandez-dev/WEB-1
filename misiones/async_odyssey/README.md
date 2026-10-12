@@ -75,7 +75,7 @@ Cada módulo tiene una sola responsabilidad. `api.js` no sabe nada del DOM, `ren
 Usé **Claude Code** (modelos Claude Sonnet 5.5 y Claude Opus 5.5) como pareja de programación, con dos guías de diseño: *Emil Kowalski* (animaciones y detalles) e *impeccable* (diseño de interfaces).
 
 Prompts reales que usé:
-- Para empezar le pegué el enunciado completo de la M2 y le pedí: *«vamos con la mision que tenemos que hacer en base a la teoria del tema2, tiene que cumplir con esto […] hazmelo todo en esta carpeta async_odyssey […] el javascript que no sea larguisimo para yo poder defenderlo bien y ve subiendo todo al github […] por commits»*.
+- Para empezar le pegué el enunciado completo de la M2 y le pedí: *«vamos con la mision que tenemos que hacer en base a la teoria del tema2, tiene que cumplir con esto […] hazmelo todo en esta carpeta async_odyssey […] el javascript que sea como sabemmos hacer de clase»*.
 - Durante el desarrollo cambié de idea varias veces:
   - *«quiero que la web sea de modelos de deportivos»*;
   - *«vamos a hacerlo con la pokeapi y ya esta»*;
@@ -117,7 +117,7 @@ Cómo se verificó:
 - `npm run build` compila sin errores.
 - Se buscó en el código que no hubiera `var`, `innerHTML`, `onclick` ni `console.log`.
 
-**Escrito a mano:** no escribí código a mano. Mi parte fue elegir la API y el estilo de la página, pedir los cambios que veía necesarios, revisar el resultado en el navegador y exigir que el JavaScript usara solo lo visto en clase para poder defenderlo.
+**Escrito a mano:** no escribí código a mano. Mi parte fue elegir la API y el estilo de la página, pedir los cambios que veía necesarios, revisar el resultado en el navegador y exigir que el JavaScript usara solo lo visto en clase para poder defenderlo, ademas de ir comparando si esta hecho con cosas de clase para poder asi ir entendiendo todo lo que hace la web.
 
 ## Autopsia
 

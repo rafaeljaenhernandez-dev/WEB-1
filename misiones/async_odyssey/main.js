@@ -77,10 +77,7 @@ mandos.addEventListener("submit", (evento) => evento.preventDefault());
 // Delegación: un solo listener para los Pokémon y los botones de reintentar
 document.addEventListener("click", (evento) => {
   const boton = evento.target.closest(".pokemon[data-id]");
-  if (boton) {
-    elegir(estado.pokemons.find((pokemon) => pokemon.id === Number(boton.dataset.id)));
-    vista.enfocarFicha();
-  }
+  if (boton) elegir(estado.pokemons.find((pokemon) => pokemon.id === Number(boton.dataset.id)));
   const accion = evento.target.closest("[data-accion]")?.dataset.accion;
   if (accion === "reintentar-lista") cargarRegion(estado.region);
   if (accion === "reintentar-ficha") elegir(estado.elegido);

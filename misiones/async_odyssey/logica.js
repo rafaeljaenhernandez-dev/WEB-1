@@ -69,11 +69,16 @@ export function ordenar(pokemons, orden) {
   return pokemons.toSorted((a, b) => (a.nombre > b.nombre ? 1 : -1));
 }
 
-// Cuenta cuántas veces sale cada tipo con reduce y devuelve el que más
+// Devuelve el tipo que más se repite y cuántas veces sale
 export function tipoMasComun(pokemons) {
-  const cuenta = pokemons.flatMap((pokemon) => pokemon.tipos).reduce((total, tipo) => ({ ...total, [tipo]: (total[tipo] ?? 0) + 1 }), {});
-  const [tipo, veces] = Object.entries(cuenta).reduce((mejor, par) => (par[1] > mejor[1] ? par : mejor), [null, 0]);
-  return { tipo, veces };
+  // 1. Todos los tipos en una sola lista: ["grass", "poison", "fire", …]
+  const tipos = pokemons.flatMap((pokemon) => pokemon.tipos);
+  // 2. Agrupados por tipo: { grass: ["grass", "grass"], poison: ["poison"], … }
+  const grupos = Object.groupBy(tipos, (tipo) => tipo);
+  // 3. Cuántos hay en cada grupo: [{ tipo: "grass", veces: 2 }, …]
+  const cuentas = Object.entries(grupos).map(([tipo, lista]) => ({ tipo, veces: lista.length }));
+  // 4. reduce se queda con el que más veces sale
+  return cuentas.reduce((mejor, cuenta) => (cuenta.veces > mejor.veces ? cuenta : mejor), { tipo: null, veces: 0 });
 }
 
 // Junta las dos respuestas en una ficha limpia, con valores por defecto si falta algo

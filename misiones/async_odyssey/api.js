@@ -10,7 +10,9 @@ export class ErrorHttp extends Error {
   }
 }
 
-// Convierte cualquier fallo en un mensaje que el usuario entienda
+// Convierte cualquier fallo en un mensaje que el usuario entienda.
+// Cada error trae su nombre en error.name: "TimeoutError" lo lanza AbortSignal.timeout
+// y "SyntaxError" lo lanza respuesta.json() si el texto no es JSON válido
 function traducirError(error) {
   if (error instanceof ErrorHttp) return error;
   if (error.name === "TimeoutError") return new Error("La PokeAPI tarda demasiado en contestar.");
@@ -54,12 +56,11 @@ async function pedirJSON(url, recortar = (datos) => datos) {
 
 export async function pedirLista(desde, hasta) {
   const datos = await pedirJSON(`${POKEAPI}/pokemon?offset=${desde - 1}&limit=${hasta - desde + 1}`);
-  return Array.isArray(datos.results) ? datos.results : [];
+  return datos.results ?? [];
 }
 
 // /type/{tipo} trae también movimientos y daños: solo guardamos qué Pokémon son de ese tipo
-const recortarTipo = ({ pokemon }) =>
-  Array.isArray(pokemon) ? pokemon.map((p) => ({ url: p?.pokemon?.url, slot: p?.slot })) : [];
+const recortarTipo = ({ pokemon }) => (pokemon ?? []).map((p) => ({ url: p?.pokemon?.url, slot: p?.slot }));
 
 export async function pedirTipo(tipo) {
   return pedirJSON(`${POKEAPI}/type/${tipo}`, recortarTipo);
@@ -68,7 +69,7 @@ export async function pedirTipo(tipo) {
 // /pokemon/{id} pesa unos 250 KB (trae todos sus movimientos): guardamos solo lo útil
 const recortarPokemon = ({ id, name, height, weight, types, stats }) => ({ id, name, height, weight, types, stats });
 
-const enEspanol = (lista) => (Array.isArray(lista) ? lista.filter((e) => e?.language?.name === "es") : []);
+const enEspanol = (lista) => (lista ?? []).filter((e) => e?.language?.name === "es");
 const recortarEspecie = ({ names, genera, flavor_text_entries }) => ({
   names: enEspanol(names), genera: enEspanol(genera), flavor_text_entries: enEspanol(flavor_text_entries),
 });
