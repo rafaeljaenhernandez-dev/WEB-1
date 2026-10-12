@@ -2,7 +2,7 @@
   "name": "async-odyssey",
   "private": true,
   "version": "1.0.0",
-  "description": "Async Odyssey: explorador de libros con la API pública de Open Library (fetch + async/await + módulos ES).",
+  "description": "Async Odyssey: Pokédex con la PokeAPI (fetch + async/await + módulos ES).",
   "type": "module",
   "scripts": {
     "dev": "vite",
