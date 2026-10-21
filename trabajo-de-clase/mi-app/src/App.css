@@ -1,16 +1,55 @@
-.tripulacion {
+.app {
   max-width: 1100px;
   margin: 0 auto;
   padding: clamp(32px, 6vw, 80px) 20px;
 }
 
-.tripulacion h1 {
+.app h1 {
   font-size: clamp(2.5rem, 7vw, 4.5rem);
   line-height: 1;
   letter-spacing: -0.02em;
-  margin: 0 0 40px;
+  margin: 0 0 24px;
+}
+
+/* Menú: una fila de pestañas que baja de línea si no cabe */
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--linea);
+}
+
+/* Botones de toda la app (menú y ejercicios) */
+.app button {
+  font: 500 0.95rem var(--fuente-titulos);
+  padding: 10px 18px;
+  border: 1px solid var(--linea);
+  background: var(--panel);
+  color: var(--texto-fuerte);
+  cursor: pointer;
+}
+
+/* Separación entre botones seguidos dentro de un ejercicio */
+section button + button {
+  margin-left: 8px;
+}
+
+.app button:hover {
+  border-color: var(--acento);
+}
+
+/* Pestaña del ejercicio que se está viendo */
+.menu button.activo {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: var(--panel);
+}
+
+.app h2 {
+  font-size: 1.8rem;
+  margin: 0 0 20px;
 }
 
 /* Cuadrícula: tantas columnas de 240px como quepan */

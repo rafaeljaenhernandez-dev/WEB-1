@@ -1,0 +1,43 @@
+.quiz {
+  max-width: 560px;
+}
+
+.quiz-texto {
+  font-size: 1.2rem;
+  color: var(--texto-fuerte);
+  margin-bottom: 20px;
+}
+
+/* Opciones en columna, una debajo de otra */
+.quiz-opciones {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.quiz-opciones button {
+  margin-left: 0;
+  text-align: left;
+}
+
+.quiz-opciones button:disabled {
+  cursor: default;
+  color: var(--texto-fuerte);
+}
+
+/* Feedback: verde la buena, roja la pulsada si era mala */
+.quiz-opciones button.correcta {
+  background: #2e7d32;
+  border-color: #2e7d32;
+  color: #ffffff;
+}
+
+.quiz-opciones button.incorrecta {
+  background: #c62828;
+  border-color: #c62828;
+  color: #ffffff;
+}
+
+.quiz-siguiente {
+  margin-top: 20px;
+}
