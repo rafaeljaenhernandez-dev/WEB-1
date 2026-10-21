@@ -1,5 +1,6 @@
 import "./App.css";
 import FichaTripulante from "./components/fichaTripulante.jsx";
+import Aplausometro from "./components/Aplausometro.jsx";
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
       <FichaTripulante nombre="Chewbacca" rol="Copiloto" especie="wookiee" />
       <FichaTripulante nombre="Scotty" rol="Ingeniero jefe" />
     </div>
+    <Aplausometro />
   </main>
   )
 }
