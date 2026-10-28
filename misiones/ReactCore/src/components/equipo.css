@@ -1,0 +1,124 @@
+/* ===== Mi equipo (lo único nuevo respecto al CSS de la M2) ===== */
+.equipo {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem 1.25rem;
+  border-radius: var(--radio);
+  background: var(--gris);
+}
+
+.equipo__cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.equipo__titulo {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.equipo__titulo span {
+  color: var(--tinta-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+.equipo__nota {
+  margin: 0;
+  color: var(--tinta-suave);
+  font-weight: 700;
+}
+
+.equipo__huecos {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hueco {
+  position: relative;
+  min-height: 6.5rem;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--tipo, var(--gris-hondo)) 22%, var(--blanco));
+  animation: entrar 260ms var(--ease-out) backwards;
+}
+
+.hueco--libre {
+  border: 2px dashed var(--gris-hondo);
+  background: transparent;
+  animation: none;
+}
+
+.hueco__abrir {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0.4rem 0.3rem 0.5rem;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: var(--tinta);
+  font: inherit;
+  cursor: pointer;
+}
+
+.hueco__abrir[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 3px var(--tipo, var(--tinta));
+}
+
+.hueco__abrir img {
+  width: 4rem;
+  height: 4rem;
+  object-fit: contain;
+}
+
+.hueco__abrir span {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  text-transform: capitalize;
+  overflow-wrap: anywhere;
+}
+
+.hueco__quitar {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.2rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--blanco);
+  color: var(--rojo-hondo);
+  font: inherit;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.boton--equipo {
+  justify-self: start;
+  margin-top: 0.25rem;
+}
+
+.boton--equipo[aria-pressed="true"] {
+  background: var(--tinta);
+}
+
+.boton:disabled {
+  background: var(--gris-hondo);
+  color: var(--tinta-suave);
+  cursor: not-allowed;
+}
+
+@media (max-width: 40rem) {
+  .equipo__huecos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

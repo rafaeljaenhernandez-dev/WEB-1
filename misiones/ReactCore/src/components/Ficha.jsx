@@ -7,7 +7,7 @@ import Stats from "./Stats.jsx";
 import Tipos from "./Tipos.jsx";
 
 // La ficha pide sus propios datos: cada vez que cambia el id, useFetch vuelve a pedir
-export default function Ficha({ elegido }) {
+export default function Ficha({ elegido, enEquipo, equipoLleno, alAlternarEquipo }) {
   const carga = useFetch(cargarFicha, elegido.id);
   const datos = carga.datos;
 
@@ -43,6 +43,15 @@ export default function Ficha({ elegido }) {
       <p className="ficha__medidas">
         {datos.categoria} · {datos.altura} · {datos.peso}
       </p>
+      <button
+        type="button"
+        className="boton boton--equipo"
+        aria-pressed={enEquipo}
+        disabled={equipoLleno && !enEquipo}
+        onClick={() => alAlternarEquipo(datos)}
+      >
+        {enEquipo ? "Quitar del equipo" : equipoLleno ? "Equipo completo" : "Añadir al equipo"}
+      </button>
       <p className="ficha__texto">{datos.descripcion}</p>
       <Stats stats={datos.stats} />
       <p className="ficha__total">
