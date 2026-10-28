@@ -1,0 +1,617 @@
+/* Estilos de la M2 Async Odyssey, reutilizados tal cual (más equipo.css) */
+/* ===== Tokens: la Pokédex (rojo, lente azul y fondo blanco) ===== */
+:root {
+  --rojo: oklch(0.55 0.22 25);
+  --rojo-hondo: oklch(0.45 0.19 25);
+  --fondo: oklch(0.99 0 0);
+  --gris: oklch(0.95 0.004 260);
+  --gris-hondo: oklch(0.89 0.006 260);
+  --tinta: oklch(0.22 0.01 260);
+  --tinta-suave: oklch(0.45 0.01 260);
+  --blanco: oklch(1 0 0);
+
+  --letra: "Nunito", system-ui, sans-serif;
+  --ancho: 82rem;
+  --radio: 18px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --sombra: 0 6px 18px -10px oklch(0.22 0.01 260 / 0.35);
+}
+
+/* ===== Colores de los tipos (los oficiales de los juegos) ===== */
+[data-tipo] {
+  --tipo-texto: var(--tinta);
+}
+[data-tipo="normal"] { --tipo: #a8a77a; }
+[data-tipo="fire"] { --tipo: #ee8130; }
+[data-tipo="water"] { --tipo: #6390f0; }
+[data-tipo="electric"] { --tipo: #f7d02c; }
+[data-tipo="grass"] { --tipo: #7ac74c; }
+[data-tipo="ice"] { --tipo: #96d9d6; }
+[data-tipo="fighting"] { --tipo: #c22e28; --tipo-texto: var(--blanco); }
+[data-tipo="poison"] { --tipo: #a33ea1; --tipo-texto: var(--blanco); }
+[data-tipo="ground"] { --tipo: #e2bf65; }
+[data-tipo="flying"] { --tipo: #a98ff3; }
+[data-tipo="psychic"] { --tipo: #f95587; }
+[data-tipo="bug"] { --tipo: #a6b91a; }
+[data-tipo="rock"] { --tipo: #b6a136; }
+[data-tipo="ghost"] { --tipo: #735797; --tipo-texto: var(--blanco); }
+[data-tipo="dragon"] { --tipo: #6f35fc; --tipo-texto: var(--blanco); }
+[data-tipo="dark"] { --tipo: #705746; --tipo-texto: var(--blanco); }
+[data-tipo="steel"] { --tipo: #b7b7ce; }
+[data-tipo="fairy"] { --tipo: #d685ad; }
+
+/* ===== Base ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  accent-color: var(--rojo);
+  scrollbar-color: var(--gris-hondo) var(--fondo);
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--fondo);
+  color: var(--tinta);
+  font-family: var(--letra);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+::selection {
+  background: var(--rojo);
+  color: var(--blanco);
+}
+
+:focus-visible {
+  outline: 3px solid var(--rojo);
+  outline-offset: 3px;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+/* ===== Cabecera: la tapa roja de la Pokédex ===== */
+.cabecera {
+  background: var(--rojo);
+  color: var(--blanco);
+  border-bottom: 6px solid var(--rojo-hondo);
+}
+
+.cabecera__dentro {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 1.75rem);
+  width: min(100% - 2rem, var(--ancho));
+  margin: 0 auto;
+  padding: clamp(1.25rem, 3vw, 2rem) 0;
+}
+
+/* La lente azul grande */
+.lente {
+  flex: none;
+  width: clamp(3.5rem, 8vw, 5.5rem);
+  aspect-ratio: 1;
+  border: 5px solid var(--blanco);
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, oklch(0.88 0.08 230) 0 14%, oklch(0.6 0.17 245) 15% 100%);
+  box-shadow: 0 0 0 3px oklch(0.25 0.02 260 / 0.35);
+}
+
+/* Las tres lucecitas: roja, amarilla y verde */
+.luces {
+  display: flex;
+  align-self: flex-start;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.luces span {
+  width: 0.85rem;
+  aspect-ratio: 1;
+  border: 2px solid oklch(0.25 0.02 260 / 0.4);
+  border-radius: 50%;
+  background: oklch(0.6 0.22 25);
+}
+
+.luces span:nth-child(2) {
+  background: oklch(0.88 0.17 95);
+}
+
+.luces span:nth-child(3) {
+  background: oklch(0.75 0.17 145);
+}
+
+.titulo {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.75rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.lema {
+  max-width: 52ch;
+  margin: 0.35rem 0 0;
+  color: oklch(0.97 0.02 25);
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
+  text-wrap: pretty;
+}
+
+/* ===== Consola: ficha a la izquierda, Pokédex a la derecha ===== */
+.consola {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(19rem, 24rem) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  width: min(100% - 2rem, var(--ancho));
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0 4rem;
+}
+
+/* ===== Etiquetas de tipo ===== */
+.tipos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: inherit;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tipo {
+  padding: 0.1rem 0.65rem;
+  border-radius: 6px;
+  background: var(--tipo, var(--gris-hondo));
+  color: var(--tipo-texto, var(--tinta));
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+
+/* ===== Ficha del Pokémon elegido ===== */
+.ficha {
+  position: sticky;
+  top: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border-radius: var(--radio);
+  background: color-mix(in oklab, var(--tipo, var(--gris-hondo)) 12%, var(--blanco));
+  box-shadow: var(--sombra);
+  scroll-margin-top: 1rem;
+  transition: background-color 300ms ease;
+}
+
+.ficha > * {
+  margin: 0;
+}
+
+.ficha__foco {
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  width: min(100%, 15rem);
+  aspect-ratio: 1;
+  margin-bottom: 0.5rem;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--tipo, var(--gris-hondo)) 35%, var(--blanco));
+}
+
+.ficha[data-estado="cargando"] .ficha__foco {
+  animation: respirar 1s ease-in-out infinite alternate;
+}
+
+/* La ilustración entra creciendo un poco desde el centro del círculo */
+.ficha__arte {
+  width: 112%;
+  height: auto;
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 300ms var(--ease-out), transform 400ms var(--ease-out);
+}
+
+.ficha__arte.lista {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ficha__arte.rota {
+  visibility: hidden;
+}
+
+.ficha__nombre {
+  display: flex;
+  text-transform: capitalize;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.6rem;
+  font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+  font-weight: 900;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.ficha__numero {
+  color: var(--tinta-suave);
+  font-size: 1.125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ficha__medidas {
+  font-weight: 700;
+}
+
+.ficha__texto {
+  color: var(--tinta-suave);
+  text-wrap: pretty;
+}
+
+/* Estadísticas: barras del color del tipo */
+.stats {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stat {
+  display: grid;
+  grid-template-columns: 5.25rem 2.25rem 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.stat__nombre {
+  font-weight: 700;
+}
+
+.stat__valor {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.stat__barra {
+  height: 0.6rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--tipo, var(--tinta-suave)) calc(var(--valor) / 255 * 100%),
+    color-mix(in oklab, var(--tipo, var(--gris-hondo)) 22%, var(--blanco)) 0
+  );
+}
+
+.ficha__total {
+  font-weight: 800;
+}
+
+/* ===== Pokédex: mandos ===== */
+.pokedex__titulo {
+  margin: 0 0 1rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.mandos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.campo {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.campo__nombre {
+  padding: 0;
+  font-size: 0.9375rem;
+  font-weight: 800;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 2px solid var(--gris-hondo);
+  border-radius: 12px;
+  background: var(--blanco);
+  color: var(--tinta);
+  font: inherit;
+  caret-color: var(--rojo);
+  transition: border-color 160ms ease;
+}
+
+.campo input:focus-visible,
+.campo select:focus-visible {
+  outline: none;
+  border-color: var(--rojo);
+}
+
+.campo input::placeholder {
+  color: oklch(0.55 0.01 260);
+}
+
+.regiones {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.regiones legend {
+  width: 100%;
+  margin-bottom: 0.35rem;
+}
+
+.chip {
+  position: relative;
+  padding: 0.35rem 0.95rem;
+  border-radius: 999px;
+  background: var(--gris);
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms var(--ease-out);
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.chip:has(input:checked) {
+  background: var(--rojo);
+  color: var(--blanco);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 3px solid var(--rojo);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .chip:not(:has(input:checked)):hover {
+    background: var(--gris-hondo);
+  }
+}
+
+.resumen {
+  min-height: 1.5rem;
+  margin: 0 0 0.85rem;
+  color: var(--tinta-suave);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== Rejilla de tarjetas ===== */
+.rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 1rem;
+}
+
+.pokemon {
+  display: grid;
+  justify-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  padding: 0.75rem 0.75rem 1rem;
+  border: 0;
+  border-radius: var(--radio);
+  background: color-mix(in oklab, var(--tipo, var(--gris-hondo)) 16%, var(--blanco));
+  color: var(--tinta);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 200ms var(--ease-out), box-shadow 200ms ease;
+}
+
+.pokemon:active {
+  transform: scale(0.97);
+}
+
+.pokemon__arte {
+  width: 7.5rem;
+  height: 7.5rem;
+  margin-bottom: 0.25rem;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--tipo, var(--gris-hondo)) 30%, var(--blanco));
+  object-fit: contain;
+  transition: transform 200ms var(--ease-out);
+}
+
+.pokemon__arte.rota {
+  visibility: hidden;
+}
+
+.pokemon__numero {
+  color: var(--tinta-suave);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.pokemon__nombre {
+  margin-bottom: 0.35rem;
+  text-transform: capitalize;
+  font-size: 1.0625rem;
+  font-weight: 900;
+  line-height: 1.15;
+  overflow-wrap: break-word;
+}
+
+/* El Pokémon que está abierto en la ficha */
+.pokemon[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 3px var(--tipo, var(--tinta));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pokemon:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--sombra);
+  }
+
+  .pokemon[aria-pressed="true"]:hover {
+    box-shadow: inset 0 0 0 3px var(--tipo, var(--tinta)), var(--sombra);
+  }
+
+  .pokemon:hover .pokemon__arte {
+    transform: scale(1.06);
+  }
+}
+
+/* Entrada escalonada, solo cuando llega una región nueva */
+.animar .pokemon {
+  animation: entrar 320ms var(--ease-out) backwards;
+  animation-delay: calc(min(var(--orden, 0), 12) * 30ms);
+}
+
+.pokemon--fantasma {
+  height: 13rem;
+  background: var(--gris);
+  animation: respirar 1s ease-in-out infinite alternate;
+}
+
+/* ===== Avisos y botones ===== */
+.aviso__titulo {
+  margin: 0;
+  color: var(--rojo-hondo);
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 900;
+}
+
+.aviso {
+  max-width: 60ch;
+  margin: 0.3rem 0 1rem;
+  color: var(--tinta-suave);
+}
+
+.boton {
+  padding: 0.65rem 1.3rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--rojo);
+  color: var(--blanco);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color 160ms ease;
+}
+
+.boton:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .boton:hover {
+    background: var(--rojo-hondo);
+  }
+}
+
+/* ===== Pie ===== */
+.pie {
+  padding: 1.5rem 1rem 2rem;
+  border-top: 1px solid var(--gris-hondo);
+  color: var(--tinta-suave);
+  font-size: 0.9375rem;
+  text-align: center;
+}
+
+.pie p {
+  margin: 0;
+}
+
+/* ===== Móvil ===== */
+@media (max-width: 56rem) {
+  .consola {
+    grid-template-columns: 1fr;
+  }
+
+  .ficha {
+    position: static;
+  }
+}
+
+@media (max-width: 40rem) {
+  .mandos {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .campo--texto {
+    grid-column: 1 / -1;
+  }
+
+  .luces {
+    display: none;
+  }
+
+  .rejilla {
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: 0.6rem;
+  }
+
+  .pokemon__arte {
+    width: 6rem;
+    height: 6rem;
+  }
+}
+
+/* ===== Animaciones ===== */
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes respirar {
+  to {
+    background: var(--gris-hondo);
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animar .pokemon {
+    animation-name: aparecer;
+  }
+
+  .ficha__arte {
+    transform: none;
+    transition: opacity 200ms ease;
+  }
+}
