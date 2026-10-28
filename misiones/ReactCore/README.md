@@ -90,7 +90,7 @@ Usé **Claude Code** (modelo Claude Opus 5.5).
 
 Prompt real que usé: le pegué la captura de la rúbrica de la M3 de la Arena y le escribí *«vamos a hacer en el la carepta de web1 ReactCore la mision3»*.
 
-La IA escribió el código por fases, partiendo de la M2, y cada fase terminó con algo funcionando y su propio commit:
+La IA escribió el código por fases, partiendo de la M2, y cada fase terminó con algo funcionando y su propio commit, ademas, yo estuve mirando cada fase y comparandola con las cosas qu ehicimos en clase, como ya sabe el metodo en el que trabajamos en este caso no tuve que cambiar nada porque el codigo de primeras ya estba hecho como hacemos en clase:
 
 | Fase | Qué se añadió | Commit |
 |------|---------------|--------|
@@ -102,14 +102,15 @@ La IA escribió el código por fases, partiendo de la M2, y cada fase terminó c
 | 6 | Arreglo: los tipos que fallan sin red se vuelven a pedir | `los tipos que fallan sin red…` |
 | 7 | Este README | `README de la M3…` |
 
-Cómo se verificó (lo hizo la IA con Chrome automatizado):
+Cómo se verificó:
 - Kanto carga 151 Pokémon. Al buscar «char» salen 3 y el orden Z-A los invierte. Con «zzz» aparece el mensaje de vacío.
 - Al pulsar Charizard se abre su ficha, su tarjeta queda marcada y cambia el título de la pestaña. Johto carga 100.
 - En el equipo, el 7.º no entra (el botón dice «Equipo completo»). La × quita, un miembro abre su ficha y el equipo sigue tras recargar. Con datos rotos en `localStorage`, arranca vacío.
 - Con la PokeAPI cortada, la lista y la ficha enseñan su error. «Volver a intentarlo» las recupera, colores incluidos.
 - No hubo errores ni avisos en la consola, `npm run build` y `npm run lint` pasan limpios, y no quedan `var`, `innerHTML`, `querySelector`, `push`, `sort` ni `key` con índice.
 
-**Escrito a mano:** [PENDIENTE: rellenar tú qué has hecho o cambiado a mano y qué has comprobado por tu cuenta]
+**Escrito a mano:** 
+Por cada una de las 7 fases he ido verfificando que todo este bien, cambiar no he tenido que cambiar nada, la ia ya esta etrenada con nuestros pdf y prestenaciones, con ejemplos de las anteriores misiones y su feetback, entonces lo hace todo bastante bien a la primera.
 
 ## Autopsia
 
