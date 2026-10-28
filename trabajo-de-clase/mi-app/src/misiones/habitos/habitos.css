@@ -1,0 +1,84 @@
+.habitos {
+  max-width: 640px;
+}
+
+/* Resumen: dos datos en una franja */
+.habitos-resumen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin-bottom: 20px;
+  padding: 14px 18px;
+  border: 1px solid var(--linea);
+  background: var(--panel);
+}
+
+.habitos-resumen strong {
+  color: var(--texto-fuerte);
+}
+
+/* Formulario: el input ocupa todo lo que sobra */
+.habitos-formulario {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.habitos-formulario input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--linea);
+  background: var(--panel);
+  color: var(--texto-fuerte);
+}
+
+.habitos-formulario input:focus {
+  outline: 2px solid var(--acento);
+  outline-offset: -1px;
+}
+
+.habitos-lista {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.habito {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1px solid var(--linea);
+  border-left: 4px solid var(--linea);
+  background: var(--panel);
+}
+
+/* Hecho hoy: borde verde, como la respuesta buena del trivial */
+.habito.hecho {
+  border-left-color: #2e7d32;
+}
+
+.habito.hecho .habito-botones button:first-child {
+  background: #2e7d32;
+  border-color: #2e7d32;
+  color: #ffffff;
+}
+
+.habito-nombre {
+  color: var(--texto-fuerte);
+  font-weight: 600;
+}
+
+.habito-racha {
+  font-size: 0.9rem;
+}
+
+.habitos-vacio {
+  padding: 14px 0;
+}

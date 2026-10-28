@@ -5,6 +5,7 @@ import Saludo from "./components/saludo.jsx";
 import FichaTripulante from "./components/fichaTripulante.jsx";
 import Aplausometro from "./components/Aplausometro.jsx";
 import Quiz from "./misiones/quiz/Quiz.jsx";
+import AppHabitos from "./misiones/habitos/AppHabitos.jsx";
 
 // Ejercicios del menú, en el orden en que se hicieron en clase
 const ejercicios = [
@@ -13,10 +14,11 @@ const ejercicios = [
   { id: "tripulacion", titulo: "Tripulación" },
   { id: "aplausometro", titulo: "Aplausómetro" },
   { id: "quiz", titulo: "M1 · Trivial" },
+  { id: "habitos", titulo: "M2 · Hábitos" },
 ];
 
 export default function App() {
-  const [actual, setActual] = useState("quiz");
+  const [actual, setActual] = useState("habitos");
 
   return (
     <main className="app">
@@ -53,6 +55,8 @@ export default function App() {
       {actual === "aplausometro" && <Aplausometro />}
 
       {actual === "quiz" && <Quiz />}
+
+      {actual === "habitos" && <AppHabitos />}
     </main>
   );
 }
