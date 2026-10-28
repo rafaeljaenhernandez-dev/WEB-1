@@ -57,3 +57,35 @@ export function limpiarLista(resultados, tipos) {
       tipos: (tipos[pokemon.id] ?? []).map((entrada) => entrada.tipo),
     }));
 }
+
+// Busca por nombre ("pika") o por número ("25", "#025") y filtra por tipo
+export function filtrar(pokemons, { texto = "", tipo = "todos" }) {
+  const buscado = texto.trim().toLowerCase().replace("#", "");
+  return pokemons.filter(
+    (pokemon) =>
+      (tipo === "todos" || pokemon.tipos.includes(tipo)) &&
+      // Number("025") es 25; Number("pika") es NaN y no coincide con ningún número
+      (pokemon.nombre.includes(buscado) || pokemon.id === Number(buscado)),
+  );
+}
+
+// Comparador de nombres: negativo, positivo o 0 si son iguales (en la M2 faltaba el 0)
+function compararNombres(a, b) {
+  if (a.nombre === b.nombre) return 0;
+  return a.nombre < b.nombre ? -1 : 1;
+}
+
+// toSorted no muta el array original (el estado de React no se toca)
+export function ordenar(pokemons, orden) {
+  if (orden === "numero") return pokemons.toSorted((a, b) => a.id - b.id);
+  if (orden === "za") return pokemons.toSorted((a, b) => compararNombres(b, a));
+  return pokemons.toSorted(compararNombres);
+}
+
+// Devuelve el tipo que más se repite y cuántas veces sale
+export function tipoMasComun(pokemons) {
+  const tipos = pokemons.flatMap((pokemon) => pokemon.tipos);
+  const grupos = Object.groupBy(tipos, (tipo) => tipo);
+  const cuentas = Object.entries(grupos).map(([tipo, lista]) => ({ tipo, veces: lista.length }));
+  return cuentas.reduce((mejor, cuenta) => (cuenta.veces > mejor.veces ? cuenta : mejor), { tipo: null, veces: 0 });
+}
