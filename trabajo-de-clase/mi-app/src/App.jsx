@@ -6,6 +6,7 @@ import FichaTripulante from "./components/fichaTripulante.jsx";
 import Aplausometro from "./components/Aplausometro.jsx";
 import Quiz from "./misiones/quiz/Quiz.jsx";
 import AppHabitos from "./misiones/habitos/AppHabitos.jsx";
+import Videoclub from "./misiones/videoclub/Videoclub.jsx";
 
 // Ejercicios del menú, en el orden en que se hicieron en clase
 const ejercicios = [
@@ -15,10 +16,11 @@ const ejercicios = [
   { id: "aplausometro", titulo: "Aplausómetro" },
   { id: "quiz", titulo: "M1 · Trivial" },
   { id: "habitos", titulo: "M2 · Hábitos" },
+  { id: "videoclub", titulo: "M3 · Videoclub" },
 ];
 
 export default function App() {
-  const [actual, setActual] = useState("habitos");
+  const [actual, setActual] = useState("videoclub");
 
   return (
     <main className="app">
@@ -57,6 +59,8 @@ export default function App() {
       {actual === "quiz" && <Quiz />}
 
       {actual === "habitos" && <AppHabitos />}
+
+      {actual === "videoclub" && <Videoclub />}
     </main>
   );
 }
