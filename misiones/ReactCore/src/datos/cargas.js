@@ -7,7 +7,11 @@ import { aFicha } from "./ficha.js";
 // si falla algún tipo, esos Pokémon salen sin color, pero la lista se pinta igual
 let tiposListos = null;
 function pedirTipos() {
-  tiposListos ??= Promise.allSettled(CLAVES_TIPOS.map(pedirTipo)).then(tiposPorId);
+  tiposListos ??= Promise.allSettled(CLAVES_TIPOS.map(pedirTipo)).then((respuestas) => {
+    // Si falló alguno (por ejemplo, sin red), se olvida la promesa: el siguiente intento los vuelve a pedir
+    if (respuestas.some((respuesta) => respuesta.status === "rejected")) tiposListos = null;
+    return tiposPorId(respuestas);
+  });
   return tiposListos;
 }
 
