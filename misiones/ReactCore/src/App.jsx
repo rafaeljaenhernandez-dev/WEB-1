@@ -3,6 +3,7 @@ import { REGIONES, filtrar, ordenar } from "./datos/pokedex.js";
 import { cargarRegion } from "./datos/cargas.js";
 import { useFetch } from "./hooks/useFetch.js";
 import Cabecera from "./components/Cabecera.jsx";
+import Ficha from "./components/Ficha.jsx";
 import Mandos from "./components/Mandos.jsx";
 import Resumen from "./components/Resumen.jsx";
 import ListaPokemon from "./components/ListaPokemon.jsx";
@@ -34,7 +35,7 @@ export default function App() {
     <>
       <Cabecera />
       <main className="consola">
-        <section className="ficha" aria-label="Ficha del Pokémon"></section>
+        <Ficha elegido={elegido} />
         <section className="pokedex" aria-labelledby="titulo-pokedex">
           <h2 id="titulo-pokedex" className="pokedex__titulo">Pokédex</h2>
           <Mandos region={region} alCambiarRegion={setRegion} filtros={filtros} alCambiarFiltro={cambiarFiltro} />
