@@ -344,3 +344,19 @@ h3 {
     transition: none !important;
   }
 }
+
+/* Aviso de datos corruptos */
+.mensaje--aviso {
+  margin-bottom: 0.75rem;
+}
+.mensaje--aviso p,
+.mensaje--aviso ul {
+  margin: 0;
+}
+.mensaje--aviso ul {
+  padding-left: 1.25rem;
+  font-size: 0.9rem;
+}
+.mensaje--error p {
+  margin: 0 0 0.5rem;
+}

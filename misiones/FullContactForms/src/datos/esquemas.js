@@ -66,3 +66,16 @@ export const esquemaInscripcion = z
     error: "El número de jugadores no encaja con el formato del juego elegido",
     path: ["jugadores"],
   });
+
+// Esquema de un equipo tal y como lo devuelve el API (reto bonus).
+// Reutiliza las mismas reglas del formulario: un email que no sea de la U-tad
+// o un juego que no existe tampoco se aceptan si vienen del servidor.
+export const esquemaEquipo = z.object({
+  id: z.number().int(),
+  ...campos,
+  jugadores: z.number().int().min(1), // del servidor ya llega como número: sin coerce
+  inscrito: z.string().refine((fecha) => !Number.isNaN(Date.parse(fecha)), { error: "Fecha de inscripción no válida" }),
+});
+
+// La respuesta de GET /equipos tiene que ser, como mínimo, una lista
+export const esquemaLista = z.array(z.unknown(), { error: "El servidor no devolvió una lista" });
