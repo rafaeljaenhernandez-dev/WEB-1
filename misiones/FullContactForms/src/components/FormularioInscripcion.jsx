@@ -2,7 +2,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { esquemaInscripcion } from "../datos/esquemas.js";
 import { DIAS, JUEGOS, NIVELES, textoFormato } from "../datos/juegos.js";
-import Campo, { MensajeError, ariaDelCampo } from "./Campo.jsx";
+import { ariaDelCampo } from "../datos/accesibilidad.js";
+import Campo, { MensajeError } from "./Campo.jsx";
 
 const VALORES_INICIALES = {
   nombre: "",

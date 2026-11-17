@@ -1,0 +1,40 @@
+{
+  "equipos": [
+    {
+      "id": 1,
+      "nombre": "Los Null Pointers",
+      "capitan": "Lucía Romero",
+      "email": "lucia.romero@live.u-tad.com",
+      "nacimiento": "2004-03-12",
+      "juego": "valorant",
+      "jugadores": 6,
+      "nivel": "intermedio",
+      "dias": ["martes", "jueves"],
+      "inscrito": "2026-11-10T18:24:00.000Z"
+    },
+    {
+      "id": 2,
+      "nombre": "Merge Conflict",
+      "capitan": "Hugo Sanz",
+      "email": "hugo.sanz@live.u-tad.com",
+      "nacimiento": "2005-07-30",
+      "juego": "rocket",
+      "jugadores": 3,
+      "nivel": "experto",
+      "dias": ["lunes", "miercoles", "viernes"],
+      "inscrito": "2026-11-12T10:05:00.000Z"
+    },
+    {
+      "id": 3,
+      "nombre": "Baron Nashor Fans",
+      "capitan": "Irene Vidal",
+      "email": "irene.vidal@live.u-tad.com",
+      "nacimiento": "2003-11-02",
+      "juego": "lol",
+      "jugadores": 5,
+      "nivel": "novato",
+      "dias": ["viernes"],
+      "inscrito": "2026-11-14T16:40:00.000Z"
+    }
+  ]
+}

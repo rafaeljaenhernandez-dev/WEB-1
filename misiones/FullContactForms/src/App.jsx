@@ -1,5 +1,6 @@
 import Cabecera from "./components/Cabecera.jsx";
 import FormularioInscripcion from "./components/FormularioInscripcion.jsx";
+import ListaEquipos from "./components/ListaEquipos.jsx";
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
         </section>
         <section className="panel" aria-labelledby="titulo-inscritos">
           <h2 id="titulo-inscritos">Equipos inscritos</h2>
+          <ListaEquipos />
         </section>
       </main>
     </>
