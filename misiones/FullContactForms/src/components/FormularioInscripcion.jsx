@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { esquemaInscripcion } from "../datos/esquemas.js";
-import { DIAS, JUEGOS, NIVELES, textoFormato } from "../datos/juegos.js";
+import { DIAS, JUEGOS, NIVELES, buscarJuego, textoFormato } from "../datos/juegos.js";
+import { useInscribir } from "../hooks/useEquipos.js";
 import { ariaDelCampo } from "../datos/accesibilidad.js";
 import Campo, { MensajeError } from "./Campo.jsx";
 
@@ -18,19 +19,22 @@ const VALORES_INICIALES = {
 };
 
 export default function FormularioInscripcion() {
+  const inscripcion = useInscribir();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    reset,
+    formState: { errors },
   } = useForm({
     resolver: zodResolver(esquemaInscripcion), // Zod decide qué es válido y con qué mensaje
     defaultValues: VALORES_INICIALES,
   });
 
-  // Solo se llama con datos ya validados. De momento simula el envío.
-  async function onSubmit(datos) {
-    await new Promise((resolver) => setTimeout(resolver, 800));
-    console.log("Inscripción válida:", datos);
+  // RHF solo llama aquí con datos que Zod ya dio por buenos; la mutación hace el POST
+  function onSubmit(datos) {
+    inscripcion.mutate(datos, {
+      onSuccess: () => reset(), // formulario limpio para el siguiente equipo
+    });
   }
 
   return (
@@ -124,13 +128,19 @@ export default function FormularioInscripcion() {
       </div>
 
       {/* Deshabilitado solo mientras se envía: nunca "hasta que sea válido" */}
-      <button type="submit" className="boton" disabled={isSubmitting}>
-        {isSubmitting ? "Inscribiendo…" : "Inscribir equipo"}
+      <button type="submit" className="boton" disabled={inscripcion.isPending}>
+        {inscripcion.isPending ? "Inscribiendo…" : "Inscribir equipo"}
       </button>
 
-      {isSubmitSuccessful && (
+      {/* Éxito con role="status" (educado) y error del servidor con role="alert" (inmediato) */}
+      {inscripcion.isSuccess && (
         <p role="status" className="mensaje mensaje--ok">
-          Formulario válido.
+          ¡«{inscripcion.data.nombre}» está dentro del torneo de {buscarJuego(inscripcion.data.juego).nombre}!
+        </p>
+      )}
+      {inscripcion.isError && (
+        <p role="alert" className="mensaje mensaje--error">
+          {inscripcion.error.message}
         </p>
       )}
     </form>

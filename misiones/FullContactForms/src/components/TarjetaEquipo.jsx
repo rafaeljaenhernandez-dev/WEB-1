@@ -1,3 +1,4 @@
+import { useDarDeBaja } from "../hooks/useEquipos.js";
 import { DIAS, NIVELES, buscarJuego } from "../datos/juegos.js";
 
 // Pasa una lista de ids a sus nombres: ["lunes", "jueves"] → "Lunes, Jueves"
@@ -8,8 +9,14 @@ function nombresDe(ids, catalogo) {
 const formatoFecha = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
 export default function TarjetaEquipo({ equipo }) {
+  // Cada tarjeta tiene su propia mutación: el "Dando de baja…" solo sale en la suya
+  const baja = useDarDeBaja();
   const juego = buscarJuego(equipo.juego);
   const suplentes = equipo.jugadores - juego.titulares;
+
+  function darDeBaja() {
+    if (window.confirm(`¿Seguro que quieres dar de baja a «${equipo.nombre}»?`)) baja.mutate(equipo.id);
+  }
 
   return (
     <li className="tarjeta">
@@ -31,6 +38,21 @@ export default function TarjetaEquipo({ equipo }) {
         <dt>Inscrito</dt>
         <dd>{formatoFecha.format(new Date(equipo.inscrito))}</dd>
       </dl>
+      <div className="tarjeta__pie">
+        <button
+          type="button"
+          className="boton boton--secundario boton--peligro"
+          disabled={baja.isPending}
+          onClick={darDeBaja}
+        >
+          {baja.isPending ? "Dando de baja…" : "Dar de baja"}
+        </button>
+      </div>
+      {baja.isError && (
+        <p role="alert" className="error">
+          {baja.error.message}
+        </p>
+      )}
     </li>
   );
 }
