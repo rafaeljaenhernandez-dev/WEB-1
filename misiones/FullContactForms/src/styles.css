@@ -341,12 +341,6 @@ h3 {
   justify-content: flex-end;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-  }
-}
-
 /* Aviso de datos corruptos */
 .mensaje--aviso {
   margin-bottom: 0.75rem;
@@ -361,4 +355,158 @@ h3 {
 }
 .mensaje--error p {
   margin: 0 0 0.5rem;
+}
+
+/* ===================================================================
+   Arena neón: rejilla de fondo, brillos de color y paneles de cristal
+   =================================================================== */
+body {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+/* Rejilla tenue que se desvanece hacia abajo */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(oklch(0.88 0.2 128 / 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.88 0.2 128 / 0.11) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 85%);
+}
+/* Dos focos de luz de color detrás de los paneles */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 30rem at 10% 12%, oklch(0.88 0.2 128 / 0.26), transparent 70%),
+    radial-gradient(40rem 34rem at 90% 55%, oklch(0.65 0.25 300 / 0.38), transparent 70%);
+}
+.cabecera {
+  background: transparent;
+  border-bottom-color: oklch(0.88 0.2 128 / 0.25);
+}
+.titulo {
+  text-shadow: 0 0 28px oklch(0.88 0.2 128 / 0.35);
+}
+.panel {
+  background: oklch(0.2 0.025 270 / 0.62);
+  backdrop-filter: blur(12px);
+  border-color: oklch(0.88 0.2 128 / 0.18);
+  box-shadow:
+    0 0 0 1px oklch(1 0 0 / 0.03) inset,
+    0 24px 60px -30px oklch(0 0 0 / 0.8);
+}
+
+/* Botón principal con resplandor */
+.boton:not(.boton--secundario) {
+  box-shadow: 0 0 0 0 oklch(0.88 0.2 128 / 0);
+  transition:
+    transform 120ms var(--ease-out),
+    background-color 150ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+}
+.boton:not(.boton--secundario):hover {
+  box-shadow: 0 0 24px oklch(0.88 0.2 128 / 0.55);
+}
+/* Mientras se envía, el botón "late" */
+.boton:not(.boton--secundario):disabled {
+  animation: latido 1s var(--ease-out) infinite;
+}
+
+/* Inputs: brillo al enfocar */
+.campo input:focus-visible,
+.campo select:focus-visible {
+  box-shadow: 0 0 0 4px oklch(0.88 0.2 128 / 0.15);
+}
+
+/* ===== Animaciones ===== */
+
+/* Las tarjetas entran deslizándose, una detrás de otra */
+.tarjeta {
+  animation: entrar 380ms var(--ease-out) both;
+  transition:
+    transform 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out),
+    border-color 180ms var(--ease-out);
+}
+.tarjeta:nth-child(2) { animation-delay: 50ms; }
+.tarjeta:nth-child(3) { animation-delay: 100ms; }
+.tarjeta:nth-child(4) { animation-delay: 150ms; }
+.tarjeta:nth-child(n + 5) { animation-delay: 200ms; }
+.tarjeta:hover {
+  transform: translateY(-3px);
+  border-color: oklch(0.88 0.2 128 / 0.5);
+  box-shadow: 0 12px 30px -12px oklch(0.88 0.2 128 / 0.35);
+}
+
+/* El campo tiembla cuando pasa a inválido; el mensaje aparece suave */
+.campo [aria-invalid="true"],
+.grupo:has([aria-invalid="true"]) {
+  animation: temblor 360ms var(--ease-out);
+}
+.grupo:has([aria-invalid="true"]) {
+  border-color: var(--error);
+}
+.error {
+  animation: aparecer 220ms var(--ease-out);
+}
+
+/* Mensajes de éxito, error global y aviso: entran con un pequeño salto */
+.mensaje--ok,
+.mensaje--error,
+.mensaje--aviso {
+  animation: saltar 320ms var(--ease-out);
+}
+.mensaje--ok {
+  box-shadow: 0 0 24px -6px oklch(0.75 0.18 140 / 0.6);
+}
+
+/* "Cargando equipos…" parpadea despacio */
+.mensaje--carga {
+  animation: respirar 1.4s ease-in-out infinite;
+}
+
+@keyframes entrar {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes temblor {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes saltar {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes respirar {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+@keyframes latido {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.88 0.2 128 / 0.5); }
+  50% { box-shadow: 0 0 22px 2px oklch(0.88 0.2 128 / 0.5); }
+}
+
+/* Quien pide menos movimiento en su sistema no ve animaciones ni transiciones */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
