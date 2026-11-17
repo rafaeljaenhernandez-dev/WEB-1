@@ -204,6 +204,8 @@ h3 {
   cursor: pointer;
 }
 .normas input {
+  width: auto;
+  flex: none;
   margin-top: 0.3rem;
   accent-color: var(--acento-hondo);
 }

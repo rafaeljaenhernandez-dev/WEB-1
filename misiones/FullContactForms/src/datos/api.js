@@ -22,7 +22,7 @@ export async function obtenerEquipos(juego) {
       equipos.push(resultado.data);
     } else {
       // Se guarda qué falló para poder enseñarlo: { id, campos: ["email", "jugadores"] }
-      const campos = resultado.error.issues.map((problema) => problema.path.join("."));
+      const campos = resultado.error.issues.map((problema) => problema.path[0]); // "dias.0" → "dias"
       corruptos.push({ id: dato?.id ?? "sin id", campos: [...new Set(campos)] });
       console.warn("Equipo descartado por datos corruptos:", dato, resultado.error.issues);
     }
