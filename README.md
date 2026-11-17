@@ -17,6 +17,7 @@ Cada proyecto está en su propia carpeta, con su código y su propio README.
 | ⚔️ M1 · El Despertar del DOM | [misiones/despertarDelDOM/](misiones/despertarDelDOM/) · [README](misiones/despertarDelDOM/README.md) | **Entrega de la M1.** *Memoria Arcana*: juego de memoria de cartas en JavaScript puro, con dificultad, temporizador, rachas, hechizo de revelación, récord y modo nocturno con la tecla **N**. |
 | 🔴 M2 · Async Odyssey | [misiones/async_odyssey/](misiones/async_odyssey/) · [README](misiones/async_odyssey/README.md) | **Entrega de la M2.** *Pokédex* con la PokeAPI: regiones, búsqueda por nombre o número, filtro por tipo y ficha de cada Pokémon. Usa `fetch` + `async/await`, módulos ES (api, lógica, render y main), estados de carga y error, colores por tipo y caché en `localStorage`. Proyecto Vite. |
 | ⚛️ M3 · Reactor Core | [misiones/ReactCore/](misiones/ReactCore/) · [README](misiones/ReactCore/README.md) | **Entrega de la M3.** La Pokédex de la M2 reconstruida en React 19: componentes con props, estado mínimo y derivado, `useEffect` con limpieza, listas con `key` estable y dos hooks propios (`useFetch` y `useLocalStorage`). Novedad: *Mi equipo* de 6 Pokémon que se guarda al recargar. |
+| 🎮 M4 · Full Contact Forms | [misiones/FullContactForms/](misiones/FullContactForms/) · [README](misiones/FullContactForms/README.md) | **Entrega de la M4.** Inscripción de equipos al torneo de esports de la U-tad: formulario accesible con React Hook Form y un esquema Zod (refinamientos y mensajes propios), lista de inscritos con TanStack Query (`useQuery` por juego, `useMutation` para inscribir y dar de baja, con invalidación) contra un API de json-server. Bonus: la respuesta del API se valida con `safeParse` y descarta un equipo corrupto. |
 
 ## Trabajo de clase
 
@@ -49,14 +50,23 @@ WEB-1/
 │   │   ├── render.js         DOM y estados
 │   │   ├── package.json
 │   │   └── README.md
-│   └── ReactCore/            M3 · Reactor Core (la Pokédex en React 19, Vite)
+│   ├── ReactCore/            M3 · Reactor Core (la Pokédex en React 19, Vite)
+│   │   ├── index.html
+│   │   ├── package.json
+│   │   ├── src/
+│   │   │   ├── App.jsx       estado compartido y valores derivados
+│   │   │   ├── components/   Ficha, Equipo, Mandos, ListaPokemon, TarjetaPokemon…
+│   │   │   ├── hooks/        useFetch y useLocalStorage
+│   │   │   └── datos/        PokeAPI, caché y transformación (sin React)
+│   │   └── README.md
+│   └── FullContactForms/     M4 · Full Contact Forms (torneo U-tad: RHF + Zod + TanStack Query)
 │       ├── index.html
 │       ├── package.json
+│       ├── db.json           datos del API (json-server)
 │       ├── src/
-│       │   ├── App.jsx       estado compartido y valores derivados
-│       │   ├── components/   Ficha, Equipo, Mandos, ListaPokemon, TarjetaPokemon…
-│       │   ├── hooks/        useFetch y useLocalStorage
-│       │   └── datos/        PokeAPI, caché y transformación (sin React)
+│       │   ├── components/   FormularioInscripcion, Campo, ListaEquipos, TarjetaEquipo…
+│       │   ├── hooks/        useEquipos: useQuery y useMutation
+│       │   └── datos/        esquemas Zod, servicios del API y catálogo de juegos
 │       └── README.md
 └── trabajo-de-clase/
     └── mi-app/               React + Vite (ejercicios del cuaderno 3)
@@ -71,7 +81,7 @@ WEB-1/
 ## Cómo probar cada proyecto
 
 - **En JavaScript puro** (`misiones/mision1/`, `misiones/despertarDelDOM/`): abre el `index.html` de la carpeta en el navegador (o con Live Server). No hace falta instalar nada.
-- **Con Vite** (`misiones/async_odyssey/`, `misiones/ReactCore/`, `trabajo-de-clase/mi-app/`): necesitan Node.js. Se arrancan entrando en su carpeta:
+- **Con Vite** (`misiones/async_odyssey/`, `misiones/ReactCore/`, `misiones/FullContactForms/`, `trabajo-de-clase/mi-app/`): necesitan Node.js. Se arrancan entrando en su carpeta:
 
   ```bash
   cd misiones/async_odyssey
@@ -80,3 +90,5 @@ WEB-1/
   ```
 
   Para los demás es igual, con `cd misiones/ReactCore` o `cd trabajo-de-clase/mi-app`.
+
+  La M4 (`misiones/FullContactForms/`) necesita además su API: `npm run api` en otra terminal antes de `npm run dev`.
