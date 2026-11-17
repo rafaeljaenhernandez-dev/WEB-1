@@ -5,6 +5,7 @@ import { DIAS, JUEGOS, NIVELES, buscarJuego, textoFormato } from "../datos/juego
 import { useInscribir } from "../hooks/useEquipos.js";
 import { ariaDelCampo } from "../datos/accesibilidad.js";
 import Campo, { MensajeError } from "./Campo.jsx";
+import Celebracion from "./Celebracion.jsx";
 
 const VALORES_INICIALES = {
   nombre: "",
@@ -68,28 +69,40 @@ export default function FormularioInscripcion() {
         </Campo>
       </div>
 
-      <div className="fila">
-        <Campo id="juego" etiqueta="Juego" error={errors.juego}>
-          {/* deps: al cambiar de juego se revalida también el número de jugadores */}
-          <select {...ariaDelCampo("juego", errors.juego)} {...register("juego", { deps: ["jugadores"] })}>
-            <option value="">Elige un juego…</option>
-            {JUEGOS.map((juego) => (
-              <option key={juego.id} value={juego.id}>
-                {juego.nombre} ({textoFormato(juego)})
-              </option>
-            ))}
-          </select>
-        </Campo>
-        <Campo id="jugadores" etiqueta="Número de jugadores" error={errors.jugadores} ayuda="Titulares más suplentes.">
-          <input
-            type="number"
-            inputMode="numeric"
-            min="1"
-            {...ariaDelCampo("jugadores", errors.jugadores, true)}
-            {...register("jugadores")}
-          />
-        </Campo>
-      </div>
+      {/* El juego se elige con tarjetas: por dentro son radios normales con register */}
+      <fieldset className="grupo" aria-describedby={errors.juego ? "error-juego" : undefined}>
+        <legend>Juego</legend>
+        <div className="juegos">
+          {JUEGOS.map((juego) => (
+            <label key={juego.id} className="juego-opcion" data-juego={juego.id}>
+              {/* deps: al cambiar de juego se revalida también el número de jugadores */}
+              <input
+                type="radio"
+                value={juego.id}
+                className="juego-opcion__radio"
+                aria-invalid={errors.juego ? "true" : "false"}
+                {...register("juego", { deps: ["jugadores"] })}
+              />
+              <span className="emblema" aria-hidden="true">
+                {juego.emblema}
+              </span>
+              <span className="juego-opcion__nombre">{juego.nombre}</span>
+              <span className="juego-opcion__formato">{textoFormato(juego)}</span>
+            </label>
+          ))}
+        </div>
+        <MensajeError id="juego" error={errors.juego} />
+      </fieldset>
+
+      <Campo id="jugadores" etiqueta="Número de jugadores" error={errors.jugadores} ayuda="Titulares más suplentes.">
+        <input
+          type="number"
+          inputMode="numeric"
+          min="1"
+          {...ariaDelCampo("jugadores", errors.jugadores, true)}
+          {...register("jugadores")}
+        />
+      </Campo>
 
       {/* Grupo de radios: fieldset + legend para que el lector anuncie la pregunta una vez */}
       <fieldset className="grupo" aria-describedby={errors.nivel ? "error-nivel" : undefined}>
@@ -138,6 +151,8 @@ export default function FormularioInscripcion() {
           ¡«{inscripcion.data.nombre}» está dentro del torneo de {buscarJuego(inscripcion.data.juego).nombre}!
         </p>
       )}
+      {/* Destello de celebración: la key con el id nuevo hace que se repita en cada inscripción */}
+      {inscripcion.isSuccess && <Celebracion key={inscripcion.data.id} />}
       {inscripcion.isError && (
         <p role="alert" className="mensaje mensaje--error">
           {inscripcion.error.message}

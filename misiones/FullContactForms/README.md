@@ -53,11 +53,12 @@ FullContactForms/
     ├── hooks/
     │   └── useEquipos.js     useEquipos (useQuery), useInscribir y useDarDeBaja (useMutation)
     └── components/
-        ├── Cabecera.jsx
+        ├── Cabecera.jsx                cartel del torneo y marcador en vivo (misma query que la lista)
         ├── FormularioInscripcion.jsx   useForm + zodResolver + useInscribir
         ├── Campo.jsx                   etiqueta + input + ayuda + error con role="alert"
+        ├── Celebracion.jsx             confeti decorativo al inscribir (aria-hidden)
         ├── ListaEquipos.jsx            filtros y estados: cargando, error, vacío, datos y corruptos
-        └── TarjetaEquipo.jsx           un equipo y su botón de baja (con su propia mutación)
+        └── TarjetaEquipo.jsx           carta de un equipo y su botón de baja (con su propia mutación)
 ```
 
 Los componentes no llaman nunca a `fetch`. Solo usan los hooks de `useEquipos.js`, que a su vez llaman a `api.js`.
@@ -67,6 +68,7 @@ Los componentes no llaman nunca a `fetch`. Solo usan los hooks de `useEquipos.js
 - **React Hook Form:**
   - Formulario no controlado: cada campo se conecta con `{...register("campo")}` y no hay ningún `useState` por campo.
   - `handleSubmit(onSubmit)` solo llama a `onSubmit` cuando Zod da los datos por buenos. El `<form>` lleva `noValidate` para que mande Zod y no el navegador.
+  - El juego se elige con tarjetas grandes, pero por dentro son radios normales con `register("juego")`: el radio queda invisible encima de la tarjeta, así que funcionan el teclado, el lector de pantalla y el foco al error.
   - Los radios del nivel y los checkboxes de los días comparten `name`. RHF junta los días en un array: `["lunes", "jueves"]`.
   - `register("juego", { deps: ["jugadores"] })` vuelve a validar los jugadores al cambiar de juego.
   - `reset()` vacía el formulario cuando la inscripción sale bien, y `defaultValues` define cómo empieza.
@@ -83,6 +85,7 @@ Los componentes no llaman nunca a `fetch`. Solo usan los hooks de `useEquipos.js
   - Las reglas de cada campo se escriben una sola vez (`campos`) y las comparten el esquema del formulario y el de la respuesta del API.
 - **TanStack Query v5:**
   - `useQuery({ queryKey: ["equipos", juego] })`: cada filtro tiene su propia entrada en la caché. Volver a un filtro ya visitado enseña la lista al instante y la refresca en segundo plano (aparece «Actualizando…»).
+  - La cabecera usa `useEquipos("todos")`, la misma clave que la lista con el filtro «Todos». Query comparte la caché y solo sale **una** petición para los dos componentes. Cuando se inscribe un equipo, el marcador se actualiza solo, gracias a la misma invalidación.
   - `useMutation` para inscribir (POST) y para dar de baja (DELETE). Al terminar bien, `invalidateQueries({ queryKey: ["equipos"] })` invalida por prefijo **todas** las listas: «Todos» y la de cada juego.
   - `retry: 1` en el `QueryClient`: un reintento basta para un corte de red; con los tres por defecto, la pantalla se quedaba unos 7 segundos en «Cargando…».
   - La capa de servicios comprueba `response.ok` y lanza un `Error` con un mensaje legible, que Query recoge en `isError`.
@@ -90,6 +93,7 @@ Los componentes no llaman nunca a `fetch`. Solo usan los hooks de `useEquipos.js
   - Lista: «Cargando equipos…», error con botón de reintentar, lista vacía («¡Sé el primero!») y lista con datos.
   - Formulario: «Inscribiendo…» mientras se envía, éxito en `role="status"` («¡«Ctrl Alt Defeat» está dentro del torneo de Rocket League!») y error del servidor en `role="alert"`.
   - Cada tarjeta tiene su propia mutación de baja: «Dando de baja…» solo sale en la tarjeta pulsada, y la baja pide confirmación.
+  - Aspecto de torneo de esports: cada juego tiene su color y su emblema, y cada equipo es una carta con su escudo, la plantilla dibujada (titulares rellenos y suplentes a rayas), el nivel en estrellas y los días como chips. Al inscribir un equipo salta un confeti. Todas las animaciones se desactivan con `prefers-reduced-motion`.
 - **★ Bonus, la respuesta del API validada con Zod:** `obtenerEquipos` pasa cada equipo por `esquemaEquipo.safeParse()`. Los que fallan no llegan a la interfaz: se apartan en `corruptos` con su id y los campos que fallaron, y la lista lo enseña en un aviso. La respuesta del POST también se valida.
 
 ## Uso de IA
@@ -99,6 +103,7 @@ Usé **Claude Code** (modelo Claude Opus 5.5).
 Prompts reales:
 - Le adjunté el PDF del enunciado de la M4 y le escribí *«vamos con la m4»*.
 - Me preguntó por el dominio y por el API, y elegí **inscripción a un torneo** y **json-server local**, las dos opciones que recomendaba.
+- Para el diseño le pedí *«hazmelo un poco mas chetado visualmente de css»* y después *«quiero que sea mucho mas visual tengo amigos con cosas super guapas»*. En cada caso me propuso una lista de cambios y elegí cuáles meter.
 
 La IA escribió el código por fases. Cada fase terminó con algo funcionando y con su propio commit:
 
@@ -111,6 +116,8 @@ La IA escribió el código por fases. Cada fase terminó con algo funcionando y 
 | 5 | Bonus: `safeParse` de la respuesta y equipo corrupto en `db.json` | `reto bonus…` |
 | 6 | Arreglos visuales tras mirar las capturas | `casilla de las normas alineada…` |
 | 7 | Este README | `README de la M4…` |
+| 8 | Arena neón: rejilla, focos de color, paneles de cristal y animaciones | `estilo de arena neón…` |
+| 9 | Rediseño: cabecera con marcador, juegos con color y emblema, cartas de equipo y efectos | `rediseño visual…` |
 
 Cómo se verificó:
 - El esquema, con casos de prueba en Node: formulario vacío, email de Gmail, capitán de 11 años y 6 jugadores en Rocket League. Cada caso da el mensaje esperado, y cuando faltan las normas el `.refine` del formato no se ejecuta (la trampa de Zod 4 que explica la teoría).

@@ -501,6 +501,434 @@ body::after {
   50% { box-shadow: 0 0 22px 2px oklch(0.88 0.2 128 / 0.5); }
 }
 
+/* ===================================================================
+   Rediseño: colores por juego, cartel con marcador, cartas y efectos
+   =================================================================== */
+
+/* ===== Color de cada juego ===== */
+[data-juego] { --juego: var(--acento); --juego-tinta: oklch(0.2 0.03 128); }
+[data-juego="valorant"] { --juego: oklch(0.68 0.22 22); --juego-tinta: oklch(0.98 0 0); }
+[data-juego="lol"] { --juego: oklch(0.76 0.12 85); --juego-tinta: oklch(0.2 0.03 85); }
+[data-juego="rocket"] { --juego: oklch(0.66 0.18 250); --juego-tinta: oklch(0.98 0 0); }
+[data-juego="brawl"] { --juego: oklch(0.87 0.17 95); --juego-tinta: oklch(0.22 0.04 95); }
+
+/* Emblema: placa con las siglas del juego */
+.emblema {
+  display: inline-grid;
+  place-items: center;
+  min-width: 3rem;
+  height: 3rem;
+  padding: 0 0.4rem;
+  border-radius: 12px;
+  font-family: var(--letra-titulo);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: var(--juego-tinta);
+  background: linear-gradient(140deg, var(--juego), color-mix(in oklch, var(--juego) 55%, black));
+  box-shadow: 0 6px 18px -6px color-mix(in oklch, var(--juego) 70%, transparent);
+  clip-path: polygon(12% 0, 100% 0, 100% 78%, 88% 100%, 0 100%, 0 22%);
+}
+.emblema--mini {
+  min-width: 1.9rem;
+  height: 1.35rem;
+  font-size: 0.65rem;
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+/* ===== Cabecera tipo cartel + marcador ===== */
+.cabecera__dentro {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  padding-top: 3rem;
+  padding-bottom: 2.5rem;
+}
+@media (min-width: 60rem) {
+  .cabecera__dentro {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+.cabecera__antetitulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid oklch(0.88 0.2 128 / 0.35);
+  border-radius: 999px;
+  background: oklch(0.88 0.2 128 / 0.08);
+}
+.punto-vivo {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--acento);
+  box-shadow: 0 0 0 0 oklch(0.88 0.2 128 / 0.7);
+  animation: pulso 1.6s ease-out infinite;
+}
+.titulo {
+  font-size: clamp(2.8rem, 8vw, 5.6rem);
+  line-height: 0.95;
+  margin-top: 0.6rem;
+  letter-spacing: -0.01em;
+}
+.titulo__acento {
+  display: block;
+  background: linear-gradient(90deg, var(--acento), oklch(0.82 0.15 200), oklch(0.7 0.25 310), var(--acento));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: degradado 6s linear infinite;
+  filter: drop-shadow(0 0 22px oklch(0.88 0.2 128 / 0.35));
+}
+.lema {
+  font-size: 1.05rem;
+  margin-top: 1rem;
+}
+.marcador {
+  background: oklch(0.2 0.025 270 / 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.88 0.2 128 / 0.2);
+  border-radius: var(--radio);
+  padding: 1.25rem 1.4rem;
+  display: grid;
+  gap: 1.1rem;
+}
+.marcador__cifras {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+.cifra {
+  margin: 0;
+  display: grid;
+}
+.cifra__numero {
+  font-family: var(--letra-titulo);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--acento);
+  text-shadow: 0 0 18px oklch(0.88 0.2 128 / 0.45);
+}
+.cifra__texto {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tinta-suave);
+}
+.barras {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.barra {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr 1.5rem;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+}
+.barra__nombre {
+  font-family: var(--letra-titulo);
+  font-weight: 700;
+  color: var(--juego);
+}
+.barra__pista {
+  height: 0.55rem;
+  border-radius: 999px;
+  background: oklch(1 0 0 / 0.07);
+  overflow: hidden;
+}
+.barra__relleno {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in oklch, var(--juego) 60%, transparent), var(--juego));
+  box-shadow: 0 0 12px var(--juego);
+  transition: width 600ms var(--ease-out);
+}
+.barra__numero {
+  text-align: right;
+  font-weight: 700;
+}
+
+/* ===== Elegir juego con tarjetas ===== */
+.juegos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+.juego-opcion {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 0.35rem;
+  padding: 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--borde);
+  background: var(--panel-claro);
+  cursor: pointer;
+  transition:
+    transform 160ms var(--ease-out),
+    border-color 160ms var(--ease-out),
+    box-shadow 160ms var(--ease-out);
+}
+.juego-opcion:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklch, var(--juego) 60%, transparent);
+}
+/* El radio sigue ahí (teclado y lector), solo que no se ve */
+.juego-opcion__radio {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.juego-opcion:has(:checked) {
+  border-color: var(--juego);
+  background: linear-gradient(160deg, color-mix(in oklch, var(--juego) 22%, var(--panel-claro)), var(--panel-claro));
+  box-shadow:
+    0 0 0 1px var(--juego),
+    0 10px 30px -12px var(--juego);
+}
+.juego-opcion:has(:focus-visible) {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
+}
+.juego-opcion__nombre {
+  font-weight: 700;
+  line-height: 1.2;
+}
+.juego-opcion__formato {
+  font-size: 0.78rem;
+  color: var(--tinta-suave);
+}
+
+/* ===== Filtros con el color de su juego ===== */
+.filtro[aria-pressed="true"] {
+  border-color: var(--juego);
+  color: var(--juego-tinta);
+  background: var(--juego);
+  box-shadow: 0 0 18px -4px var(--juego);
+}
+
+/* ===== Cartas de equipo ===== */
+.tarjeta {
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  gap: 0;
+  border: 1px solid color-mix(in oklch, var(--juego) 35%, var(--borde));
+  border-radius: 14px;
+  background: var(--panel-claro);
+}
+/* Luz que sigue al ratón */
+.tarjeta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(16rem circle at var(--x, 50%) var(--y, 0%), color-mix(in oklch, var(--juego) 22%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 200ms var(--ease-out);
+}
+.tarjeta:hover::before {
+  opacity: 1;
+}
+.tarjeta:hover {
+  border-color: var(--juego);
+  box-shadow: 0 16px 36px -16px var(--juego);
+}
+.tarjeta__banda {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  background: linear-gradient(110deg, color-mix(in oklch, var(--juego) 30%, transparent), transparent 75%);
+  border-bottom: 1px solid color-mix(in oklch, var(--juego) 25%, transparent);
+}
+.tarjeta__escudo {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  font-family: var(--letra-titulo);
+  font-weight: 700;
+  color: var(--juego-tinta);
+  background: radial-gradient(circle at 30% 25%, color-mix(in oklch, var(--juego) 70%, white), var(--juego) 60%);
+  box-shadow:
+    0 0 0 3px var(--fondo),
+    0 0 0 5px color-mix(in oklch, var(--juego) 70%, transparent);
+}
+.tarjeta h3 {
+  font-size: 1.2rem;
+}
+.tarjeta__capitan {
+  margin: 0.1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--tinta-suave);
+}
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--tinta);
+  background: oklch(0.15 0.02 270 / 0.7);
+  border: 1px solid color-mix(in oklch, var(--juego) 40%, transparent);
+  padding: 0.2rem 0.6rem 0.2rem 0.25rem;
+}
+.tarjeta__cuerpo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem 1rem;
+  padding: 0.9rem 1rem 0.4rem;
+}
+.dato {
+  display: grid;
+  gap: 0.3rem;
+}
+.dato--ancho {
+  grid-column: 1 / -1;
+}
+.dato__titulo {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tinta-suave);
+}
+.plantilla {
+  display: flex;
+  gap: 0.3rem;
+}
+.ficha {
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  background: var(--juego);
+  box-shadow: 0 0 8px color-mix(in oklch, var(--juego) 70%, transparent);
+}
+.ficha--suplente {
+  background: transparent;
+  border: 2px dashed var(--juego);
+  box-shadow: none;
+}
+.estrellas {
+  display: flex;
+  gap: 0.15rem;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+.estrella {
+  color: oklch(1 0 0 / 0.15);
+}
+.estrella--llena {
+  color: oklch(0.87 0.17 90);
+  text-shadow: 0 0 10px oklch(0.87 0.17 90 / 0.6);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.chip {
+  font-size: 0.8rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--juego) 14%, transparent);
+  border: 1px solid color-mix(in oklch, var(--juego) 35%, transparent);
+}
+.tarjeta__pie {
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem 0.9rem;
+}
+.tarjeta__fecha {
+  font-size: 0.8rem;
+  color: var(--tinta-suave);
+}
+.tarjeta > .error {
+  padding: 0 1rem 0.9rem;
+}
+
+/* ===== Borde con degradado que gira en el panel del formulario ===== */
+@property --angulo {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.panel:has(.formulario) {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(oklch(0.19 0.025 270 / 0.92), oklch(0.19 0.025 270 / 0.92)) padding-box,
+    conic-gradient(
+        from var(--angulo),
+        var(--acento),
+        oklch(0.82 0.15 200),
+        oklch(0.7 0.25 310),
+        transparent 70%,
+        var(--acento)
+      )
+      border-box;
+  animation: girar 6s linear infinite;
+  box-shadow: 0 30px 80px -40px oklch(0.88 0.2 128 / 0.45);
+}
+
+/* ===== Celebración al inscribir ===== */
+.formulario {
+  position: relative;
+}
+.celebracion {
+  position: absolute;
+  left: 50%;
+  bottom: 4.5rem;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.confeti {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.9rem;
+  border-radius: 2px;
+  background: var(--acento);
+  opacity: 0;
+  animation: estallar 1100ms var(--ease-out) forwards;
+  animation-delay: calc(var(--i) * 12ms);
+  --giro: calc(var(--i) * 20deg);
+}
+.confeti:nth-child(4n + 1) { background: oklch(0.82 0.15 200); }
+.confeti:nth-child(4n + 2) { background: oklch(0.7 0.25 310); }
+.confeti:nth-child(4n + 3) { background: oklch(0.87 0.17 90); }
+.mensaje--ok {
+  border-color: var(--acento);
+  font-weight: 600;
+}
+
+@keyframes pulso {
+  0% { box-shadow: 0 0 0 0 oklch(0.88 0.2 128 / 0.7); }
+  100% { box-shadow: 0 0 0 10px oklch(0.88 0.2 128 / 0); }
+}
+@keyframes degradado {
+  to { background-position: 300% 0; }
+}
+@keyframes girar {
+  to { --angulo: 360deg; }
+}
+@keyframes estallar {
+  0% { opacity: 1; transform: rotate(var(--giro)) translateY(0) scale(0.6); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--giro)) translateY(-160px) rotate(220deg) scale(1); }
+}
+
 /* Quien pide menos movimiento en su sistema no ve animaciones ni transiciones */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -508,5 +936,8 @@ body::after {
   *::after {
     animation: none !important;
     transition: none !important;
+  }
+  .celebracion {
+    display: none;
   }
 }

@@ -17,6 +17,7 @@ export default function ListaEquipos() {
             key={filtro.id}
             type="button"
             className="boton boton--secundario filtro"
+            data-juego={filtro.id}
             aria-pressed={juego === filtro.id}
             onClick={() => setJuego(filtro.id)}
           >
