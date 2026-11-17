@@ -101,11 +101,10 @@ Los componentes no llaman nunca a `fetch`. Solo usan los hooks de `useEquipos.js
 Usé **Claude Code** (modelo Claude Opus 5.5).
 
 Prompts reales:
-- Le adjunté el PDF del enunciado de la M4 y le escribí *«vamos con la m4»*.
+- Le adjunté el PDF del enunciado de la M4 y le escribí *«vamos con la m4 juntos paso a paso»*.
 - Me preguntó por el dominio y por el API, y elegí **inscripción a un torneo** y **json-server local**, las dos opciones que recomendaba.
-- Para el diseño le pedí *«hazmelo un poco mas chetado visualmente de css»* y después *«quiero que sea mucho mas visual tengo amigos con cosas super guapas»*. En cada caso me propuso una lista de cambios y elegí cuáles meter.
 
-La IA escribió el código por fases. Cada fase terminó con algo funcionando y con su propio commit:
+La IA escribió el código por fases, donde cada una de estas furon revisadas pot mi. Cada fase terminó con algo funcionando y con su propio commit:
 
 | Fase | Qué se añadió | Commit |
 |------|---------------|--------|
