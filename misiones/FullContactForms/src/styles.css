@@ -1,0 +1,346 @@
+/* ===== Tokens: arena de esports (fondo oscuro, acento lima y rojo para errores) ===== */
+:root {
+  --fondo: oklch(0.17 0.02 270);
+  --panel: oklch(0.22 0.025 270);
+  --panel-claro: oklch(0.27 0.03 270);
+  --borde: oklch(0.36 0.03 270);
+  --tinta: oklch(0.96 0.01 270);
+  --tinta-suave: oklch(0.78 0.02 270);
+  --acento: oklch(0.88 0.2 128);
+  --acento-hondo: oklch(0.72 0.19 128);
+  --error: oklch(0.72 0.19 22);
+  --error-fondo: oklch(0.3 0.08 22);
+  --ok-fondo: oklch(0.32 0.08 140);
+  --aviso-fondo: oklch(0.34 0.07 80);
+
+  --letra: "Inter", system-ui, sans-serif;
+  --letra-titulo: "Chakra Petch", "Inter", system-ui, sans-serif;
+  --ancho: 76rem;
+  --radio: 14px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--letra);
+  background: var(--fondo);
+  color: var(--tinta);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--letra-titulo);
+  line-height: 1.15;
+  margin: 0;
+}
+
+/* Foco siempre visible para quien navega con teclado */
+:focus-visible {
+  outline: 3px solid var(--acento);
+  outline-offset: 2px;
+}
+
+/* ===== Cabecera ===== */
+.cabecera {
+  border-bottom: 1px solid var(--borde);
+  background:
+    linear-gradient(120deg, oklch(0.88 0.2 128 / 0.12), transparent 55%),
+    var(--fondo);
+}
+.cabecera__dentro {
+  max-width: var(--ancho);
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 2rem;
+}
+.cabecera__antetitulo {
+  margin: 0 0 0.35rem;
+  color: var(--acento);
+  font-family: var(--letra-titulo);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+.titulo {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  text-transform: uppercase;
+}
+.lema {
+  max-width: 42rem;
+  color: var(--tinta-suave);
+  margin: 0.5rem 0 0;
+}
+
+/* ===== Distribución ===== */
+.contenido {
+  max-width: var(--ancho);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+@media (min-width: 60rem) {
+  .contenido {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  }
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 1.5rem;
+}
+.panel > h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+/* ===== Formulario ===== */
+.formulario {
+  display: grid;
+  gap: 1rem;
+}
+.fila {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 36rem) {
+  .fila {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.campo {
+  display: grid;
+  gap: 0.3rem;
+  align-content: start;
+}
+.campo > label,
+.grupo legend {
+  font-weight: 600;
+}
+.campo input,
+.campo select {
+  font: inherit;
+  color: var(--tinta);
+  background: var(--panel-claro);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  width: 100%;
+  transition: border-color 150ms var(--ease-out);
+}
+.campo input[type="date"] {
+  color-scheme: dark;
+}
+.campo input:hover,
+.campo select:hover {
+  border-color: var(--tinta-suave);
+}
+[aria-invalid="true"] {
+  border-color: var(--error) !important;
+}
+.ayuda {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--tinta-suave);
+}
+.error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--error);
+  font-weight: 500;
+}
+.error::before {
+  content: "✕ ";
+}
+
+/* Grupos de radios y checkboxes */
+.grupo {
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 0.75rem 1rem 0.9rem;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.grupo legend {
+  padding: 0 0.35rem;
+}
+.opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.opcion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  cursor: pointer;
+  background: var(--panel-claro);
+}
+.opcion:has(input:checked) {
+  border-color: var(--acento);
+  color: var(--acento);
+}
+.opcion input {
+  accent-color: var(--acento-hondo);
+}
+.normas {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  cursor: pointer;
+}
+.normas input {
+  margin-top: 0.3rem;
+  accent-color: var(--acento-hondo);
+}
+
+/* ===== Botones ===== */
+.boton {
+  font: inherit;
+  font-weight: 700;
+  border: 0;
+  border-radius: 10px;
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  background: var(--acento);
+  color: oklch(0.2 0.03 128);
+  transition:
+    transform 120ms var(--ease-out),
+    background-color 150ms var(--ease-out);
+}
+.boton:hover {
+  background: var(--acento-hondo);
+}
+.boton:active {
+  transform: scale(0.97);
+}
+.boton:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.boton--secundario {
+  background: transparent;
+  color: var(--tinta);
+  border: 1px solid var(--borde);
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+}
+.boton--secundario:hover {
+  background: var(--panel-claro);
+}
+.boton--peligro {
+  color: var(--error);
+}
+
+/* ===== Mensajes globales ===== */
+.mensaje {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--borde);
+}
+.mensaje--ok {
+  background: var(--ok-fondo);
+}
+.mensaje--error {
+  background: var(--error-fondo);
+}
+.mensaje--aviso {
+  background: var(--aviso-fondo);
+}
+.mensaje--carga {
+  color: var(--tinta-suave);
+}
+
+/* ===== Lista de equipos ===== */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.filtro[aria-pressed="true"] {
+  border-color: var(--acento);
+  color: var(--acento);
+}
+.estado-lista {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  min-height: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--tinta-suave);
+  font-size: 0.9rem;
+}
+.equipos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.tarjeta {
+  background: var(--panel-claro);
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--acento);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+.tarjeta__cabeza {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+.tarjeta h3 {
+  font-size: 1.15rem;
+}
+.etiqueta {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: var(--fondo);
+  color: var(--acento);
+  white-space: nowrap;
+}
+.tarjeta__datos {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.15rem 0.75rem;
+  font-size: 0.9rem;
+}
+.tarjeta__datos dt {
+  color: var(--tinta-suave);
+}
+.tarjeta__datos dd {
+  margin: 0;
+}
+.tarjeta__pie {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
